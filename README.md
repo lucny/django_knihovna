@@ -18,3 +18,28 @@
 ### Přístupové údaje do administrace
 - superuživatel: `admin`
 - heslo: `admin`
+
+---
+## Řešení praktických úloh
+
+### 1. Vytvoření nového modelu Rezervace
+
+**Zadání:** 
+
+- V souboru `models.py` vytvořte nový model **Recenze**, který umožní *oprávněným uživatelům* přidávat do
+aplikace recenze vybrané knihy (obě pole - `recenzent` a `kniha` - budou provázána s už existujícími modely
+vztahy 1:N). 
+- Součástí recenze bude *povinné* textové pole `text` (bude sloužit k zapsání textu recenze) a
+*povinný* výběrový seznam `hodnoceni` (umožňuje zadat hodnocení v rozsahu *0 až 5*, přičemž do databáze se
+uloží číselná hodnota a v seznamu uživatel uvidí řetězec tvořený příslušným *počtem hvězdiček*; výchozí
+hodnota bude nastavena na *3*). 
+- Součástí modelu bude také pole `upraveno`, jehož prostřednictvím bude v databázi automaticky uloženo datum, 
+kdy byla recenze naposledy *aktualizována*. 
+- Nezapomeňte v modelu nastavit vhodná pojmenování *popisků jednotlivých polí*, připojit stručné *návodné
+texty* pro zadávající uživatele a možná *chybová hlášení*.
+
+**Příloha:**
+
+![Zaznam recenze v administraci](./docs/img/recenze_zaznam.png)
+
+
