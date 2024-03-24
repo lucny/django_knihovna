@@ -36,7 +36,8 @@ class Zanr(models.Model):
 
 
 class Vydavatelstvi(models.Model):
-    nazev = models.CharField(max_length=100, verbose_name='Název vydavatelství', help_text='Zadejte název vydavatelství',
+    nazev = models.CharField(max_length=100, verbose_name='Název vydavatelství',
+                             help_text='Zadejte název vydavatelství',
                              error_messages={'blank': 'Název vydavatelství je povinný údaj'})
     adresa = models.CharField(blank=True, null=True, max_length=200, verbose_name='Adresa')
 
@@ -56,11 +57,13 @@ class Kniha(models.Model):
     obsah = models.TextField(blank=True, verbose_name='Obsah knihy', help_text='Vložte obsah knihy')
     pocet_stran = models.PositiveIntegerField(blank=True, null=True, validators=[MaxValueValidator(9999)],
                                               verbose_name='Počet stran', help_text='Zadejte počet stran (max. 9999)')
-    rok_vydani = models.PositiveIntegerField(blank=True, null=True, validators=[MinValueValidator(1500), MaxValueValidator(2100)],
+    rok_vydani = models.PositiveIntegerField(blank=True, null=True,
+                                             validators=[MinValueValidator(1500), MaxValueValidator(2100)],
                                              verbose_name='Rok vydání', help_text='Zadejte rok vydání (1500 - 2100)')
     obalka = models.ImageField(upload_to='obalky', verbose_name='Obálka knihy')
     zanry = models.ManyToManyField(Zanr)
-    vydavatelstvi = models.ForeignKey('Vydavatelstvi', on_delete=models.CASCADE, blank=True, null=True, verbose_name='Vydavatelství')
+    vydavatelstvi = models.ForeignKey('Vydavatelstvi', on_delete=models.CASCADE, blank=True, null=True,
+                                      verbose_name='Vydavatelství')
 
     class Meta:
         ordering = ['titul']
@@ -86,3 +89,14 @@ class Recenze(models.Model):
     )
     hodnoceni = models.PositiveSmallIntegerField(verbose_name='Hodnocení', default=3, choices=HODNOCENI_KNIHY)
     upraveno = models.DateTimeField(auto_now=True)
+
+    # Vnitřní třída Meta s dalšími metainformacemi o modelu
+    class Meta:
+        ordering = ['-hodnoceni']
+        verbose_name = 'Recenze'
+        verbose_name_plural = 'Recenze'
+
+    # Metoda pro textovou reprezentaci objektu
+    def __str__(self):
+        return (f'{self.recenzent.last_name if self.recenzent.last_name else self.recenzent}: {self.text}, '
+                f'hodnocení: {self.hodnoceni}, ({self.upraveno.strftime("%Y-%m-%d %H:%M:%S")})')

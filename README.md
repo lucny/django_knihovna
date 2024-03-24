@@ -65,7 +65,10 @@ V souboru `models.py` vytvořte nový model `Recenze`:
 ```python
 # Import třídy User z balíčku django.contrib.auth.models
 from django.contrib.auth.models import User
+
 ...
+
+
 # Vytvoření modelu Recenze
 class Recenze(models.Model):
     text = models.TextField(verbose_name='Text recenze', help_text='Vložte text recenze')
@@ -145,3 +148,84 @@ Migraci provedeme pomocí příkazů `python manage.py makemigrations` a `python
 Výsledek migrace můžeme zkontrolovat v PyCharmu v záložce `Database`:
 
 ![Databázová tabulka Recenze](./docs/img/db-knihovna_recenze.png)
+
+---
+
+### 2. Úprava modelu Rezervace a jeho registrace v administraci
+
+**Zadání:**
+
+- V modelu bude nastaveno `výchozí řazení` podle hodnoty pole `hodnoceni` (*sestupně*).
+- *Textová reprezentace* objektu bude odpovídat tomuto vzoru:
+
+![Textová reprezentace objektu](./docs/img/textova-reprezentace-objektu.png)
+
+- Proveďte *migraci modelu* a jeho *registraci v administrační části*.
+- Vložte do databáze testovací záznam podle vzoru:
+
+![Záznam recenze v administraci](./docs/img/recenze-zaznam.png)
+
+**Řešení:**
+
+1. V modelu `Recenze` upravte třídu `Recenze` následovně:
+
+```python
+class Recenze(models.Model):
+    ...
+
+    # Vnitřní třída Meta s dalšími metainformacemi o modelu
+    class Meta:
+        ordering = ['-hodnoceni']
+        verbose_name = 'Recenze'
+        verbose_name_plural = 'Recenze'
+
+    # Metoda pro textovou reprezentaci objektu
+    def __str__(self):
+        return (f'{self.recenzent.last_name if self.recenzent.last_name else self.recenzent}: {self.text}, '
+                f'hodnocení: {self.hodnoceni}, ({self.upraveno.strftime("%Y-%m-%d %H:%M:%S")})')
+```
+
+2. Proveďte migraci modelu pomocí příkazů `python manage.py makemigrations` a `python manage.py migrate`.
+3. V souboru `admin.py` v adresáři aplikace a zaregistrujte model `Recenze`:
+
+```python
+from django.contrib import admin
+# Import modelu Recenze
+from .models import Autor, Kniha, Vydavatelstvi, Zanr, Recenze
+
+...
+# Registrace modelu Recenze
+admin.site.register(Recenze)
+```
+
+4. Spusťte vývojový server a na adrese `http://localhost:8000/admin` se přihlaste jako superuživatel (admin/admin).
+5. V sekci `Recenze` vložte testovací záznam podle vzoru.
+
+**Poznámky k řešení:**
+
+- Vnitřní třída `Meta` obsahuje další metainformace o modelu, např. `ordering` určuje výchozí řazení záznamů.
+  V tomto případě jsou záznamy řazeny sestupně podle hodnoty pole `hodnoceni`. Atributy `verbose_name`
+  a `verbose_name_plural` slouží k definici popisku modelu v administraci. Podrobnější informace o možnostech použití
+  třídy `Meta` naleznete [Django - Meta options](https://docs.djangoproject.com/en/5.0/ref/models/options/).
+- Metoda `__str__` (
+  viz [Django - Model instance reference](https://docs.djangoproject.com/en/5.0/ref/models/instances/#str))
+  definuje textovou reprezentaci objektu. V tomto případě se zobrazí jméno recenzenta (pokud je
+  vyplněno), text recenze, hodnocení a datum poslední úpravy.
+  Klíčové slovo `self` odkazuje na aktuální instanci objektu. Díky tomu můžeme přistupovat k jednotlivým atributům
+  objektu a vytvářet textovou reprezentaci podle požadovaného formátu.
+
+> [!TIP]
+> V Pythonu lze formátovat řetězce pomocí metody `str.format()` nebo f-stringů (od verze Python 3.6) - viz
+> [Python - Formátování řetězců](https://realpython.com/python-f-strings/).
+> - F-stringy umožňují vkládat do řetězců proměnné a výrazy pomocí závorek `{}`.
+> - V příkladu je použit f-string pro vytvoření textové reprezentace objektu `Recenze`.
+> - Součástí je i tzv. *ternární operátor* (podmíněný výraz), který umožňuje zkrácený zápis podmínky typu `if-else`. Zde
+    konkrétně slouží k zobrazení příjmení recenzenta, pokud je vyplněno, jinak se zobrazí uživatelské jméno.
+> - Metoda `strftime()` (
+    viz [Python - Metoda strftime()](https://www.w3schools.com/python/gloss_python_date_strftime.asp))
+    slouží k formátování data a času podle zadaného formátu. V tomto případě se zobrazí datum a čas poslední úpravy ve
+    formátu `YYYY-MM-DD HH:MM:SS`.
+
+- Registace modelu `Recenze` v administraci se provádí pomocí funkce `admin.site.register(Recenze)`.
+  Tímto krokem se model `Recenze` zaregistruje v administraci a bude možné spravovat záznamy v sekci `Recenze`. Bez této
+  registrace by nebylo možné zobrazit a editovat záznamy v administraci.
