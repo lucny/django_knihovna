@@ -229,3 +229,182 @@ admin.site.register(Recenze)
 - Registace modelu `Recenze` v administraci se provádí pomocí funkce `admin.site.register(Recenze)`.
   Tímto krokem se model `Recenze` zaregistruje v administraci a bude možné spravovat záznamy v sekci `Recenze`. Bez této
   registrace by nebylo možné zobrazit a editovat záznamy v administraci.
+
+---
+## 3. Webová stránka Seznam knih
+
+**Zadání:**
+- Vytvořte v aplikaci novou webovou stránku, která bude na adrese `http://127.0.0.1:8000/knihovna/books`
+vypisovat v přehledné tabulce **Seznam knih** podle následujícího vzoru:
+
+![Seznam knih](./docs/img/seznam-knih.png)
+
+- Seznam bude uspořádán podle **roku vydání** (*sestupně*). 
+- Sloupec `Titul` bude obsahovat názvy knih s odkazy na stránky s detailem knihy. 
+- Sloupec `Autoři` bude obsahovat zkrácená jména všech autorů dané knihy a odkazovat na stránky s podrobnými údaji o autorovi.
+
+**Řešení:**
+
+1. Vytvořte nový pohled `SeznamKnihView` v souboru `views.py`:
+
+```python   
+from django.views.generic import ListView
+from .models import Kniha
+...
+# Přidání třídy BooksListView, která dědí z generické třídy ListView
+# Pohled zobrazuje seznam knih
+class BooksListView(ListView):
+    model = Kniha
+    template_name = 'books/books_list.html'
+    context_object_name = 'books'
+    ordering = ['-rok_vydani']
+```
+
+> [!NOTE]
+> **Poznámky k řešení:**
+>
+>- Pohled `BooksListView` dědí od třídy `ListView` (
+  viz [Django - ListView](https://docs.djangoproject.com/en/5.0/ref/class-based-views/generic-display/#listview)).
+  Tato třída umožňuje zobrazit seznam objektů z databáze v přehledné tabulce.
+>- Atribut `model` určuje, který model bude použit pro získání dat. V tomto případě se jedná o model `Kniha`.
+>- Atribut `template_name` určuje název šablony, která bude použita pro zobrazení dat. V tomto případě se jedná o šablonu
+  `books_list.html` v adresáři `templates/books`.
+>- Atribut `context_object_name` určuje název proměnné, která bude předána do šablony. V tomto případě se jedná o proměnnou
+  `books`, která bude obsahovat seznam knih.
+>- Atribut `ordering` určuje výchozí řazení záznamů. V tomto případě jsou záznamy řazeny sestupně podle roku vydání.
+
+>[!TIP]
+> Alternativně lze vytvořit pohled pomocí funkce `render()` a předat do šablony seznam knih pomocí slovníku.
+> Příkladem je následující kód:
+> ```python
+> from django.shortcuts import render
+> from .models import Kniha
+> ...
+> def books_list(request):
+>  context = {
+>      'books': Kniha.objects.order_by('-rok_vydani')
+> }
+> return render(request, 'books/books_list.html', context)
+> ```
+> V tomto případě se vytvoří slovník `context` s klíčem `books`, který obsahuje seznam knih seřazený sestupně podle roku
+> vydání. Tento slovník se předá do šablony `books_list.html` pomocí funkce `render()`.
+> 
+> Podrobnější informace o funkcích `render()` a `order_by()` naleznete v oficiální dokumentaci Django:
+> - [Django - Funkce render()](https://docs.djangoproject.com/en/5.0/topics/http/shortcuts/#render)
+> - [Django - Metoda order_by()](https://docs.djangoproject.com/en/5.0/ref/models/querysets/#order-by)
+> - [Django - QuerySet API reference](https://docs.djangoproject.com/en/5.0/ref/models/querysets/)
+
+> [!IMPORTANT]
+> Soubor `views.py` v adresáři aplikace `knihovna` obsahuje definice pohledů, které zpracovávají požadavky uživatele.
+> Úkolem pohledů je získat data z databáze, zpracovat je a předat je do šablony pro zobrazení.
+> 
+> Pohledy v Django mohou být definovány jako funkce nebo třídy. V případě třídních pohledů je třeba pohled předat jako
+> třídu pomocí metody `as_view()`. Třídní pohledy umožňují snadnější organizaci kódu a využití dědičnosti.
+> 
+> Podrobnější informace o pohledech naleznete v oficiální dokumentaci Django:
+> - [Django - Pohledy](https://docs.djangoproject.com/en/5.0/topics/http/views/)
+> - [Django - Pohledy založené na třídách](https://docs.djangoproject.com/en/5.0/topics/class-based-views/)
+
+
+2. Vytvořte šablonu `books_list.html` v adresáři `templates/books`:
+
+```html
+{% extends 'base.html' %}
+
+{% block title %}Seznam knih{% endblock %}
+
+{% block content %}
+  <h2 class="display-4 text-center">Seznam knih</h2>
+  <div class="row mb-2">
+    <div class="col-12">
+    <table class="table table-responsive-lg table-striped table-hover">
+      <thead class="bg-secondary">
+        <tr>
+            <th>Titul</th>
+            <th>Autoři</th>
+            <th>Vydavatelství</th>
+            <th>Rok vydání</th>
+            <th>Počet stran</th>
+        </tr>
+      </thead>
+      <tbody>
+      {% for book in books %}
+        <tr>
+            <td><strong><a href="#" class="text-info">{{ book.titul.upper }}</a></strong></td>
+            <td>
+                {% for autor in book.autori.all %}
+                <a href="#">{{ autor.jmeno|first }}. {{ autor.prijmeni }}</a>
+                {% if not forloop.last %}, {% endif %}
+                {% endfor %}
+            </td>
+            <td>{{ book.vydavatelstvi }}</td>
+            <td class="text-right">{{ book.rok_vydani }}</td>
+            <td class="text-right">{{ book.pocet_stran }}</td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+    </div>
+  </div>
+{% endblock %}
+```            
+
+> [!NOTE]
+> **Poznámky k řešení:**
+>
+>- Šablona `books_list.html` obsahuje bloky `title` a `content`, které rozšiřují základní šablonu `base.html`.
+>- V bloku `content` je nadpis `Seznam knih` a tabulka s jednotlivými sloupci pro zobrazení informací o knihách.
+>- V cyklu `{% for book in books %}` jsou postupně zpracovávány jednotlivé knihy z proměnné `books`.
+>- V každém řádku tabulky jsou zobrazeny informace o titulu, autorech, vydavatelství, roce vydání a počtu stran.
+>- Titul knihy je zobrazen jako tučný text s odkazem na stránku s detailem knihy. Pro zobrazení velkých písmen je použita
+  metoda `upper` (
+  viz [Django - Upper template filter](https://docs.djangoproject.com/en/5.0/ref/templates/builtins/#upper)).
+>- Autoři knihy jsou zobrazeni jako odkazy na stránky s podrobnými údaji o autorovi. Pro zobrazení zkráceného jména autora
+  je použit filtr `first` (
+  viz [Django - First template filter](https://docs.djangoproject.com/en/5.0/ref/templates/builtins/#first)).
+>- V cyklu `{% for autor in book.autori.all %}` jsou postupně zpracováváni všichni autoři dané knihy. V případě, že
+  autor není poslední v seznamu, je za jménem zobrazena čárka.
+>- V šabloně je použit Bootstrap (
+  viz [Bootstrap - Oficiální stránky](https://getbootstrap.com/)) pro vytvoření responzivního designu tabulky.
+
+> [!IMPORTANT]
+> Šablony v Django jsou HTML soubory, které slouží k vizuálnímu zobrazení dat získaných z databáze nebo jiných zdrojů.
+> Šablony mohou obsahovat HTML kód, CSS styly, JavaScript a speciální šablonovací značky (tagy) a filtry.
+> 
+> Šablonovací značky a filtry umožňují dynamické zpracování dat a vytváření interaktivních webových stránek.
+> Django používá vlastní šablonovací systém, který je inspirován jazykem šablon Jinja2.
+> 
+> Podrobnější informace o šablonovacím systému Django naleznete v oficiální dokumentaci Django:
+> - [Django - Šablony](https://docs.djangoproject.com/en/5.0/topics/templates/)
+> - [Django - Šablony - Filtry](https://docs.djangoproject.com/en/5.0/topics/templates/#filters)
+> - [Django - Šablony - Tagy](https://docs.djangoproject.com/en/5.0/topics/templates/#tags)
+> - [Django - Šablony - Proměnné](https://docs.djangoproject.com/en/5.0/topics/templates/#variables)
+
+3. Vytvořte novou URL adresu pro zobrazení seznamu knih v souboru `urls.py` v adresáři aplikace:
+
+```python
+from django.urls import path
+from .views import SeznamKnihView
+
+urlpatterns = [
+    ...
+    # URL adresa pro zobrazení seznamu knih
+    path('books/', BooksListView.as_view(), name='books_list'),
+]
+``` 
+
+> [!NOTE]
+> **Poznámky k řešení:**
+> 
+> - URL adresa `/books/` bude zobrazovat seznam knih pomocí pohledu `BooksListView`.
+> - Pohled `BooksListView` je zde předán jako třída pomocí metody `as_view()`.
+> - Název URL adresy je definován jako `books_list` a může být použit pro generování odkazů v šablonách.
+> - Podrobnější informace o definici URL adres naleznete v oficiální dokumentaci Django:
+> [Django - URL dispatcher](https://docs.djangoproject.com/en/5.0/topics/http/urls/)
+ 
+> [!IMPORTANT]
+> Soubor `urls.py` v adresáři aplikace `knihovna` obsahuje definice URL adres pro jednotlivé části aplikace.
+> Je součástí tzv. *systému URL dispatcher*, který zajišťuje směrování požadavků na jednotlivé části aplikace.
+> Každá URL adresa je propojena s konkrétním pohledem, který zpracovává požadavky na danou adresu. 
+> Pohledy mohou být definovány jako funkce nebo třídy a zpracovávají požadavky uživatele, případně zobrazují data z databáze.
+> V případě použití třídových pohledů je třeba pohled předat jako třídu pomocí metody `as_view()`.

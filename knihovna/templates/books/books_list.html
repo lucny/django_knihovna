@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+
+{% block title %}Seznam knih{% endblock %}
+
+{% block content %}
+  <h2 class="display-4 text-center">Seznam knih</h2>
+  <div class="row mb-2">
+    <div class="col-12">
+    <table class="table table-responsive-lg table-striped table-hover">
+      <thead class="bg-secondary">
+        <tr>
+            <th>Titul</th>
+            <th>Autoři</th>
+            <th>Vydavatelství</th>
+            <th>Rok vydání</th>
+            <th>Počet stran</th>
+        </tr>
+      </thead>
+      <tbody>
+      {% for book in books %}
+        <tr>
+            <td><strong><a href="#" class="text-info">{{ book.titul.upper }}</a></strong></td>
+            <td>
+                {% for autor in book.autori.all %}
+                <a href="#">{{ autor.jmeno|first }}. {{ autor.prijmeni }}</a>
+                {% if not forloop.last %}, {% endif %}
+                {% endfor %}
+            </td>
+            <td>{{ book.vydavatelstvi }}</td>
+            <td class="text-right">{{ book.rok_vydani }}</td>
+            <td class="text-right">{{ book.pocet_stran }}</td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+    </div>
+  </div>
+{% endblock %}
