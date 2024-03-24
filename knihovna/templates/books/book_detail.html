@@ -3,23 +3,29 @@
 {% block title %}Detail knihy: {{ book.titul }}{% endblock %}
 
 {% block content %}
-<h2 class="display-4 text-center">{{ book.titul }}</h2>
-<div class="row bg-dark p-3 mb-2">
-    <div class="col-md-4 text-light">
-        {% if book.obalka %}
-        <img src="{{ book.obalka.url }}" alt="{{ book }}" class="rounded img-fluid">
-        {% endif %}
-        <p class="mt-3">Vydáno: {{ book.vydavatelstvi }}, {{ book.rok_vydani }}</p>
-        <hr>
-        <p>
-            {% for zanr in book.zanry.all %}
-            <a href="#" class="btn btn-info">{{ zanr }}</a>
-            {% endfor %}
-        </p>
+    <h2 class="display-4 text-center">{{ book.titul }}</h2>
+    <div class="row bg-dark p-3 mb-2">
+        <div class="col-md-4 text-light">
+            {% if book.obalka %}
+                <img src="{{ book.obalka.url }}" alt="{{ book }}" class="rounded img-fluid">
+            {% endif %}
+            <p class="mt-3">Vydáno: {{ book.vydavatelstvi }}, {{ book.rok_vydani }}</p>
+            <hr>
+            <p>
+                {% for autor in book.autori.all %}
+                    <a href="{% url 'author_detail' autor.pk %}">{{ autor.jmeno }} {{ autor.prijmeni }}</a>
+                    {% if not forloop.last %}, {% endif %}
+                {% endfor %}
+            </p>
+            <p>
+                {% for zanr in book.zanry.all %}
+                    <a href="#" class="btn btn-info">{{ zanr }}</a>
+                {% endfor %}
+            </p>
+        </div>
+        <div class="col-md-8">
+            <h4 class="text-info">Obsah knihy</h4>
+            <p class="text-light">{{ book.obsah }}</p>
+        </div>
     </div>
-    <div class="col-md-8">
-        <h4 class="text-info">Obsah knihy</h4>
-        <p class="text-light">{{ book.obsah }}</p>
-    </div>
-</div>
 {% endblock %}

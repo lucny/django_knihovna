@@ -101,8 +101,9 @@ Pro každý sloupec je definován typ pole a další parametry, které ovlivňuj
 Podrobnější informace o jednotlivých typech polí naleznete v oficiální dokumentaci Django:
 
 - [Django - Pole modelů](https://docs.djangoproject.com/en/5.0/topics/db/models/#fields)
-  
+
 Podrobnější informace o jednotlivých parametrech polí naleznete v oficiální dokumentaci Django:
+
 - [Django - Parametry polí](https://docs.djangoproject.com/en/5.0/ref/models/fields/#field-options)
 
 Součástí modelu `Recenze` jsou následující pole:
@@ -232,17 +233,20 @@ admin.site.register(Recenze)
   registrace by nebylo možné zobrazit a editovat záznamy v administraci.
 
 ---
+
 ### 3. Webová stránka Seznam knih
 
 **Zadání:**
+
 - Vytvořte v aplikaci novou webovou stránku, která bude na adrese `http://127.0.0.1:8000/knihovna/books`
-vypisovat v přehledné tabulce **Seznam knih** podle následujícího vzoru:
+  vypisovat v přehledné tabulce **Seznam knih** podle následujícího vzoru:
 
 ![Seznam knih](./docs/img/seznam-knih.png)
 
-- Seznam bude uspořádán podle **roku vydání** (*sestupně*). 
-- Sloupec `Titul` bude obsahovat názvy knih s odkazy na stránky s detailem knihy. 
-- Sloupec `Autoři` bude obsahovat zkrácená jména všech autorů dané knihy a odkazovat na stránky s podrobnými údaji o autorovi.
+- Seznam bude uspořádán podle **roku vydání** (*sestupně*).
+- Sloupec `Titul` bude obsahovat názvy knih s odkazy na stránky s detailem knihy.
+- Sloupec `Autoři` bude obsahovat zkrácená jména všech autorů dané knihy a odkazovat na stránky s podrobnými údaji o
+  autorovi.
 
 **Řešení:**
 
@@ -251,7 +255,10 @@ vypisovat v přehledné tabulce **Seznam knih** podle následujícího vzoru:
 ```python   
 from django.views.generic import ListView
 from .models import Kniha
+
 ...
+
+
 # Přidání třídy BooksListView, která dědí z generické třídy ListView
 # Pohled zobrazuje seznam knih
 class BooksListView(ListView):
@@ -265,16 +272,18 @@ class BooksListView(ListView):
 > **Poznámky k řešení:**
 >
 >- Pohled `BooksListView` dědí od třídy `ListView` (
-  viz [Django - ListView](https://docs.djangoproject.com/en/5.0/ref/class-based-views/generic-display/#listview)).
-  Tato třída umožňuje zobrazit seznam objektů z databáze v přehledné tabulce.
+   viz [Django - ListView](https://docs.djangoproject.com/en/5.0/ref/class-based-views/generic-display/#listview)).
+   Tato třída umožňuje zobrazit seznam objektů z databáze v přehledné tabulce.
 >- Atribut `model` určuje, který model bude použit pro získání dat. V tomto případě se jedná o model `Kniha`.
->- Atribut `template_name` určuje název šablony, která bude použita pro zobrazení dat. V tomto případě se jedná o šablonu
-  `books_list.html` v adresáři `templates/books`.
->- Atribut `context_object_name` určuje název proměnné, která bude předána do šablony. V tomto případě se jedná o proměnnou
-  `books`, která bude obsahovat seznam knih.
+>- Atribut `template_name` určuje název šablony, která bude použita pro zobrazení dat. V tomto případě se jedná o
+   šablonu
+   `books_list.html` v adresáři `templates/books`.
+>- Atribut `context_object_name` určuje název proměnné, která bude předána do šablony. V tomto případě se jedná o
+   proměnnou
+   `books`, která bude obsahovat seznam knih.
 >- Atribut `ordering` určuje výchozí řazení záznamů. V tomto případě jsou záznamy řazeny sestupně podle roku vydání.
 
->[!TIP]
+> [!TIP]
 > Alternativně lze vytvořit pohled pomocí funkce `render()` a předat do šablony seznam knih pomocí slovníku.
 > Příkladem je následující kód:
 > ```python
@@ -289,7 +298,7 @@ class BooksListView(ListView):
 > ```
 > V tomto případě se vytvoří slovník `context` s klíčem `books`, který obsahuje seznam knih seřazený sestupně podle roku
 > vydání. Tento slovník se předá do šablony `books_list.html` pomocí funkce `render()`.
-> 
+>
 > Podrobnější informace o funkcích `render()` a `order_by()` naleznete v oficiální dokumentaci Django:
 > - [Django - Funkce render()](https://docs.djangoproject.com/en/5.0/topics/http/shortcuts/#render)
 > - [Django - Metoda order_by()](https://docs.djangoproject.com/en/5.0/ref/models/querysets/#order-by)
@@ -298,14 +307,13 @@ class BooksListView(ListView):
 > [!IMPORTANT]
 > Soubor `views.py` v adresáři aplikace `knihovna` obsahuje definice pohledů, které zpracovávají požadavky uživatele.
 > Úkolem pohledů je získat data z databáze, zpracovat je a předat je do šablony pro zobrazení.
-> 
+>
 > Pohledy v Django mohou být definovány jako funkce nebo třídy. V případě třídních pohledů je třeba pohled předat jako
 > třídu pomocí metody `as_view()`. Třídní pohledy umožňují snadnější organizaci kódu a využití dědičnosti.
-> 
+>
 > Podrobnější informace o pohledech naleznete v oficiální dokumentaci Django:
 > - [Django - Pohledy](https://docs.djangoproject.com/en/5.0/topics/http/views/)
 > - [Django - Pohledy založené na třídách](https://docs.djangoproject.com/en/5.0/topics/class-based-views/)
-
 
 2. Vytvořte šablonu `books_list.html` v adresáři `templates/books`:
 
@@ -315,38 +323,38 @@ class BooksListView(ListView):
 {% block title %}Seznam knih{% endblock %}
 
 {% block content %}
-  <h2 class="display-4 text-center">Seznam knih</h2>
-  <div class="row mb-2">
+<h2 class="display-4 text-center">Seznam knih</h2>
+<div class="row mb-2">
     <div class="col-12">
-    <table class="table table-responsive-lg table-striped table-hover">
-      <thead class="bg-secondary">
-        <tr>
-            <th>Titul</th>
-            <th>Autoři</th>
-            <th>Vydavatelství</th>
-            <th>Rok vydání</th>
-            <th>Počet stran</th>
-        </tr>
-      </thead>
-      <tbody>
-      {% for book in books %}
-        <tr>
-            <td><strong><a href="#" class="text-info">{{ book.titul.upper }}</a></strong></td>
-            <td>
-                {% for autor in book.autori.all %}
-                <a href="#">{{ autor.jmeno|first }}. {{ autor.prijmeni }}</a>
-                {% if not forloop.last %}, {% endif %}
-                {% endfor %}
-            </td>
-            <td>{{ book.vydavatelstvi }}</td>
-            <td class="text-right">{{ book.rok_vydani }}</td>
-            <td class="text-right">{{ book.pocet_stran }}</td>
-        </tr>
-      {% endfor %}
-      </tbody>
-    </table>
+        <table class="table table-responsive-lg table-striped table-hover">
+            <thead class="bg-secondary">
+            <tr>
+                <th>Titul</th>
+                <th>Autoři</th>
+                <th>Vydavatelství</th>
+                <th>Rok vydání</th>
+                <th>Počet stran</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for book in books %}
+            <tr>
+                <td><strong><a href="#" class="text-info">{{ book.titul.upper }}</a></strong></td>
+                <td>
+                    {% for autor in book.autori.all %}
+                    <a href="#">{{ autor.jmeno|first }}. {{ autor.prijmeni }}</a>
+                    {% if not forloop.last %}, {% endif %}
+                    {% endfor %}
+                </td>
+                <td>{{ book.vydavatelstvi }}</td>
+                <td class="text-right">{{ book.rok_vydani }}</td>
+                <td class="text-right">{{ book.pocet_stran }}</td>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
     </div>
-  </div>
+</div>
 {% endblock %}
 ```            
 
@@ -357,24 +365,26 @@ class BooksListView(ListView):
 >- V bloku `content` je nadpis `Seznam knih` a tabulka s jednotlivými sloupci pro zobrazení informací o knihách.
 >- V cyklu `{% for book in books %}` jsou postupně zpracovávány jednotlivé knihy z proměnné `books`.
 >- V každém řádku tabulky jsou zobrazeny informace o titulu, autorech, vydavatelství, roce vydání a počtu stran.
->- Titul knihy je zobrazen jako tučný text s odkazem na stránku s detailem knihy. Pro zobrazení velkých písmen je použita
-  metoda `upper` (
-  viz [Django - Upper template filter](https://docs.djangoproject.com/en/5.0/ref/templates/builtins/#upper)).
->- Autoři knihy jsou zobrazeni jako odkazy na stránky s podrobnými údaji o autorovi. Pro zobrazení zkráceného jména autora
-  je použit filtr `first` (
-  viz [Django - First template filter](https://docs.djangoproject.com/en/5.0/ref/templates/builtins/#first)).
+>- Titul knihy je zobrazen jako tučný text s odkazem na stránku s detailem knihy. Pro zobrazení velkých písmen je
+   použita
+   metoda `upper` (
+   viz [Django - Upper template filter](https://docs.djangoproject.com/en/5.0/ref/templates/builtins/#upper)).
+>- Autoři knihy jsou zobrazeni jako odkazy na stránky s podrobnými údaji o autorovi. Pro zobrazení zkráceného jména
+   autora
+   je použit filtr `first` (
+   viz [Django - First template filter](https://docs.djangoproject.com/en/5.0/ref/templates/builtins/#first)).
 >- V cyklu `{% for autor in book.autori.all %}` jsou postupně zpracováváni všichni autoři dané knihy. V případě, že
-  autor není poslední v seznamu, je za jménem zobrazena čárka.
+   autor není poslední v seznamu, je za jménem zobrazena čárka.
 >- V šabloně je použit Bootstrap (
-  viz [Bootstrap - Oficiální stránky](https://getbootstrap.com/)) pro vytvoření responzivního designu tabulky.
+   viz [Bootstrap - Oficiální stránky](https://getbootstrap.com/)) pro vytvoření responzivního designu tabulky.
 
 > [!IMPORTANT]
 > Šablony v Django jsou HTML soubory, které slouží k vizuálnímu zobrazení dat získaných z databáze nebo jiných zdrojů.
 > Šablony mohou obsahovat HTML kód, CSS styly, JavaScript a speciální šablonovací značky (tagy) a filtry.
-> 
+>
 > Šablonovací značky a filtry umožňují dynamické zpracování dat a vytváření interaktivních webových stránek.
 > Django používá vlastní šablonovací systém, který je inspirován jazykem šablon Jinja2.
-> 
+>
 > Podrobnější informace o šablonovacím systému Django naleznete v oficiální dokumentaci Django:
 > - [Django - Šablony](https://docs.djangoproject.com/en/5.0/topics/templates/)
 > - [Django - Šablony - Filtry](https://docs.djangoproject.com/en/5.0/topics/templates/#filters)
@@ -396,31 +406,34 @@ urlpatterns = [
 
 > [!NOTE]
 > **Poznámky k řešení:**
-> 
+>
 > - URL adresa `/books/` bude zobrazovat seznam knih pomocí pohledu `BooksListView`.
 > - Pohled `BooksListView` je zde předán jako třída pomocí metody `as_view()`.
 > - Název URL adresy je definován jako `books_list` a může být použit pro generování odkazů v šablonách.
 > - Podrobnější informace o definici URL adres naleznete v oficiální dokumentaci Django:
-> [Django - URL dispatcher](https://docs.djangoproject.com/en/5.0/topics/http/urls/)
- 
+    > [Django - URL dispatcher](https://docs.djangoproject.com/en/5.0/topics/http/urls/)
+
 > [!IMPORTANT]
 > Soubor `urls.py` v adresáři aplikace `knihovna` obsahuje definice URL adres pro jednotlivé části aplikace.
 > Je součástí tzv. *systému URL dispatcher*, který zajišťuje směrování požadavků na jednotlivé části aplikace.
-> Každá URL adresa je propojena s konkrétním pohledem, který zpracovává požadavky na danou adresu. 
-> Pohledy mohou být definovány jako funkce nebo třídy a zpracovávají požadavky uživatele, případně zobrazují data z databáze.
+> Každá URL adresa je propojena s konkrétním pohledem, který zpracovává požadavky na danou adresu.
+> Pohledy mohou být definovány jako funkce nebo třídy a zpracovávají požadavky uživatele, případně zobrazují data z
+> databáze.
 > V případě použití třídových pohledů je třeba pohled předat jako třídu pomocí metody `as_view()`.
 
 ---
+
 ### 4. Webová stránka Detail knihy
 
 **Zadání:**
+
 - Vytvořte v aplikaci novou webovou stránku, která bude na adrese `http://127.0.0.1:8000/books/<id knihy>`
-vypisovat podrobnosti o knize podle následujícího vzoru:
+  vypisovat podrobnosti o knize podle následujícího vzoru:
 
 ![Detail knihy](./docs/img/detail-knihy.png)
 
-- Stránka bude v nadpisu obsahovat název knihy a pod ním budou responzivně zobrazeny bloky s obrázkem obálky, 
-informace o vydavatelství, roce vydání, žánrech a obsahu knihy.
+- Stránka bude v nadpisu obsahovat název knihy a pod ním budou responzivně zobrazeny bloky s obrázkem obálky,
+  informace o vydavatelství, roce vydání, žánrech a obsahu knihy.
 
 **Řešení:**
 
@@ -429,7 +442,10 @@ informace o vydavatelství, roce vydání, žánrech a obsahu knihy.
 ```python   
 from django.views.generic import DetailView
 from .models import Kniha
+
 ...
+
+
 # Přidání třídy BookDetailView, která dědí z generické třídy DetailView
 # Pohled zobrazuje detail knihy
 class BookDetailView(DetailView):
@@ -440,15 +456,17 @@ class BookDetailView(DetailView):
 
 > [!NOTE]
 > **Poznámky k řešení:**
-> 
+>
 > - Pohled `BookDetailView` dědí od třídy `DetailView` (
-  viz [Django - DetailView](https://docs.djangoproject.com/en/5.0/ref/class-based-views/generic-display/#detailview)).
-  Tato třída umožňuje zobrazit detailní informace o jednom objektu z databáze.
+    viz [Django - DetailView](https://docs.djangoproject.com/en/5.0/ref/class-based-views/generic-display/#detailview)).
+    Tato třída umožňuje zobrazit detailní informace o jednom objektu z databáze.
 > - Atribut `model` určuje, který model bude použit pro získání dat. V tomto případě se jedná o model `Kniha`.
-> - Atribut `template_name` určuje název šablony, která bude použita pro zobrazení dat. V tomto případě se jedná o šablonu
-  `book_detail.html` v adresáři `templates/books`.
-> - Atribut `context_object_name` určuje název proměnné, která bude předána do šablony. V tomto případě se jedná o proměnnou
-  `book`, která bude obsahovat detailní informace o knize.
+> - Atribut `template_name` určuje název šablony, která bude použita pro zobrazení dat. V tomto případě se jedná o
+    šablonu
+    `book_detail.html` v adresáři `templates/books`.
+> - Atribut `context_object_name` určuje název proměnné, která bude předána do šablony. V tomto případě se jedná o
+    proměnnou
+    `book`, která bude obsahovat detailní informace o knize.
 
 > [!TIP]
 > Alternativně lze vytvořit pohled pomocí funkce `render()` a předat do šablony detail knihy pomocí slovníku.
@@ -466,7 +484,6 @@ class BookDetailView(DetailView):
 > ```
 > V tomto případě se vytvoří slovník `context` s klíčem `book`, který obsahuje detailní informace o knize. Tento slovník
 > se předá do šablony `book_detail.html` pomocí funkce `render()`.
-
 
 2. Vytvořte šablonu `book_detail.html` v adresáři `templates/books`:
 
@@ -500,15 +517,18 @@ class BookDetailView(DetailView):
 
 > [!NOTE]
 > **Poznámky k řešení:**
-> 
+>
 > - Šablona `book_detail.html` obsahuje bloky `title` a `content`, které rozšiřují základní šablonu `base.html`.
 > - V bloku `title` je nadpis stránky s názvem knihy.
-> - V bloku `content` jsou zobrazeny detailní informace o knize, jako je obrázek obálky, vydavatelství, rok vydání, žánry
-  a obsah knihy.
-> - Obrázek obálky knihy je zobrazen pouze v případě, že je k dispozici. Pro zobrazení obrázku je použit atribut `obalka`
-  s cestou k obrázku.
-> - Informace o vydavatelství a roku vydání jsou zobrazeny v odstavci. Pro zobrazení žánrů je použit cyklus `{% for zanr in
-  book.zanry.all %}`, který postupně zpracovává všechny žánry knihy.
+> - V bloku `content` jsou zobrazeny detailní informace o knize, jako je obrázek obálky, vydavatelství, rok vydání,
+    žánry
+    a obsah knihy.
+> - Obrázek obálky knihy je zobrazen pouze v případě, že je k dispozici. Pro zobrazení obrázku je použit
+    atribut `obalka`
+    s cestou k obrázku.
+> - Informace o vydavatelství a roku vydání jsou zobrazeny v odstavci. Pro zobrazení žánrů je použit
+    cyklus `{% for zanr in
+    book.zanry.all %}`, který postupně zpracovává všechny žánry knihy.
 > - Obsah knihy je zobrazen v odstavci s třídou `text-light`. Pro zobrazení obsahu knihy je použit atribut `obsah`.
 > - Pro zobrazení žánrů je použit Bootstrap a třídy pro vytvoření tlačítek s barvou pozadí.
 
@@ -529,7 +549,8 @@ urlpatterns = [
 
 - Například pro zobrazení detailu knihy s ID 2 bude adresa `http://localhost:8000/knihovna/books/2`.
 
-5. Pro zobrazení této stránky ze seznamu knih na adrese `http://localhost:8000/knihovna/books` vytvořte odkaz na detail knihy v šabloně
+5. Pro zobrazení této stránky ze seznamu knih na adrese `http://localhost:8000/knihovna/books` vytvořte odkaz na detail
+   knihy v šabloně
    `books_list.html`:
 
 ```html
@@ -540,10 +561,242 @@ urlpatterns = [
 
 > [!NOTE]
 > **Poznámky k řešení:**
-> 
+>
 > - Pro vytvoření odkazu na detail knihy je použita šablona `{% url 'book_detail' book.pk %}`. Tato šablona generuje URL
-  adresu pro zobrazení detailu knihy s konkrétním ID.
+    adresu pro zobrazení detailu knihy s konkrétním ID.
 > - Parametr `book.pk` obsahuje primární klíč (ID) knihy, který je použit pro identifikaci konkrétní knihy.
 > - Po kliknutí na odkaz se zobrazí stránka s detailními informacemi o dané knize.
 > - Podrobnější informace o generování URL adres naleznete v oficiální dokumentaci Django:
-> [Django - Funkce URL](https://docs.djangoproject.com/en/5.0/ref/templates/builtins/#url)
+    > [Django - Funkce URL](https://docs.djangoproject.com/en/5.0/ref/templates/builtins/#url)
+
+---
+
+### 5. Webové stránky Galerie autorů a Profil autora
+
+**Zadání:**
+
+- Vytvořte obdobným způsobem stránku s galerií autorů a stránku s podrobnými informacemi o vybraném
+  autorovi. Vzhled přizpůsobte uvedeným předlohám:
+
+![Seznam autorů](./docs/img/galerie-autoru.png)
+
+![Detail autora](./docs/img/profil-autora.png)
+
+**Řešení:**
+
+1. Vytvořte nový pohled `AuthorsListView` v souboru `views.py`:
+
+```python
+# Import třídy Count pro agregaci dat
+from django.db.models import Count
+# Import modelu Autor
+from .models import Autor
+
+...
+
+
+# Přidání třídy AuthorsListView, která dědí z generické třídy ListView
+# Pohled zobrazuje seznam autorů
+class AuthorsListView(ListView):
+    model = Autor
+    context_object_name = 'authors'
+    queryset = Autor.objects.annotate(pocet_knih=Count('kniha')).order_by('-pocet_knih')
+    template_name = 'authors/authors_list.html'
+```
+
+> [!NOTE]
+> **Poznámky k řešení:**
+>
+> - Pohled `AuthorsListView` dědí opět od třídy `ListView` a zobrazuje seznam autorů.
+> - Atribut `queryset` umožňuje vytvořit vlastní dotaz na data. V tomto případě jsou data agregována pomocí
+    metody `annotate`
+    a seřazena sestupně podle počtu knih, které autor napsal.
+> - Atribut `pocet_knih` je výsledkem agregace dat. Pro získání počtu knih je použita metoda `Count('kniha')`, která
+    spočítá
+    počet knih, jež autor napsal.
+> - Tento atribut bude možné využít v šabloně pro zobrazení počtu knih u každého autora.
+
+> [!IMPORTANT]
+> QuerySet je objekt, který reprezentuje databázový dotaz a umožňuje získávat, filtrovat a zpracovávat data z databáze.
+> QuerySety lze vytvářet pomocí metod ORM (Object-Relational Mapping) a provádět nad nimi různé operace, jako je
+> filtrování,
+> řazení, agregace, spojování a další.
+>
+> Podrobnější informace o QuerySetech naleznete v oficiální dokumentaci Django:
+> [Django - QuerySet API reference](https://docs.djangoproject.com/en/5.0/ref/models/querysets/)
+
+2. Vytvořte šablonu `authors_list.html` v adresáři `templates/authors`:
+
+```html
+{% extends 'base.html' %}
+
+{% block title %}Galerie autorů{% endblock %}
+
+{% block content %}
+<h2 class="display-4 text-center">Galerie autorů</h2>
+<div class="row bg-dark mb-2">
+    {% for author in authors %}
+    <div class="col-md-3 col-lg-2 pt-3 pb-3 d-flex flex-column">
+        {% if author.fotografie %}
+        <img src="{{ author.fotografie.url }}" alt="{{ author }}" class="rounded img-fluid">
+        {% endif %}
+        <p class="text-center text-light mt-auto p-1"><a href="{% url 'author_detail' author.pk %}" class="text-light">{{
+            author.jmeno }} <b>{{ author.prijmeni }}</b></a> <span class="badge bg-info text-white">{{ author.kniha_set.count }}</span>
+        </p>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}
+```
+
+> [!NOTE]
+> **Poznámky k řešení:**
+>
+> - Šablona `authors_list.html` obsahuje bloky `title` a `content`, které rozšiřují základní šablonu `base.html`.
+> - V bloku `title` je nadpis stránky s názvem `Galerie autorů`.
+> - V bloku `content` jsou zobrazeny informace o autorovi, jako je fotografie, jméno, příjmení a počet knih napsaných
+    autorem.
+> - Fotografie autora je zobrazena pouze v případě, že je k dispozici. Pro zobrazení fotografie je použit atribut
+    `fotografie` s cestou k obrázku.
+> - Po kliknutí na jméno autora se zobrazí stránka s podrobnými informacemi o daném autorovi.
+> - Počet knih napsaných autorem je zobrazen v odstavci s třídou `badge bg-info text-white`. Pro zobrazení počtu knih je
+    použit atribut `kniha_set.count`.
+> - Pro zobrazení počtu knih je použit Bootstrap a třídy pro vytvoření tlačítka s barvou pozadí.
+
+3. Vytvořte nový pohled `AuthorDetailView` v souboru `views.py`:
+
+```python
+# Přidání třídy AuthorDetailView, která dědí z generické třídy DetailView
+# Pohled zobrazuje detail/profil autora
+class AuthorDetailView(DetailView):
+    model = Autor
+    context_object_name = 'author'
+    template_name = 'authors/author_detail.html'
+```
+
+4. Vytvořte šablonu `author_detail.html` v adresáři `templates/authors`:
+
+```html
+{% extends 'base.html' %}
+
+{% block title %}Profil autora: {{ author.jmeno }} {{ author.prijmeni }}{% endblock %}
+
+{% block content %}
+<h2 class="display-4 text-center">{{ author.jmeno }} <b>{{ author.prijmeni }}</b></h2>
+<div class="row bg-dark p-3 mb-2">
+    <div class="col-md-4 text-light">
+        {% if author.fotografie %}
+        <img src="{{ author.fotografie.url }}" alt="{{ author }}" class="rounded img-fluid">
+        {% endif %}
+        <p class="mt-3">Datum narození: {{ author.narozeni }}
+            {% if author.umrti %}
+            <br>Datum úmrtí: {{ author.umrti }}
+            {% endif %}
+        </p>
+        <hr>
+        <h4 class="text-info">Knihy</h4>
+        <hr>
+        <ul>
+            {% for kniha in author.kniha_set.all %}
+            <li>{{ kniha }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+    <div class="col-md-8">
+        <h4 class="text-info">Životopis</h4>
+        <p class="text-light">{{ author.biografie }}</p>
+    </div>
+</div>
+{% endblock %}
+```
+
+5. Vytvořte nové URL adresy pro zobrazení galerie autorů a detailu autora v souboru `urls.py` v adresáři aplikace:
+
+```python
+from django.urls import path
+# Import pohledů pro zobrazení galerie autorů a detailu autora
+from .views import BookDetailView, BooksListView, AuthorsListView, AuthorDetailView, index
+
+urlpatterns = [
+    # URL adresa pro zobrazení domovské stránky
+    path('', index, name='index'),
+    # URL adresa pro zobrazení seznamu knih
+    path('books/', BooksListView.as_view(), name='books_list'),
+    # URL adresa pro zobrazení detailu knihy
+    path('books/<int:pk>', BookDetailView.as_view(), name='book_detail'),
+    # URL adresa pro zobrazení galerie autorů
+    path('authors/', AuthorsListView.as_view(), name='authors_list'),
+    # URL adresa pro zobrazení detailu autora
+    path('authors/<int:pk>', AuthorDetailView.as_view(), name='author_detail'),
+]
+```
+
+> [!NOTE]
+> **Poznámky k řešení:**
+>
+> Optimalizovali jsme URL adresy pro zobrazení domovsk0 str8nkz, seznamu knih a detailu knihy.
+> Pro zobrazení galerie autorů jsme vytvořili novou URL adresu `/authors/` a pro zobrazení detailu autora novou URL
+> adresu
+> `/authors/<id autora>`.
+
+6. Provázání stránek pomocí odkazů:
+
+- V šabloně `books_list.html` vytvořte odkaz na detail autora:
+
+```html
+...
+<td>
+    {% for autor in book.autori.all %}
+    <a href="{% url 'author_detail' autor.pk %}">{{ autor.jmeno }} {{ autor.prijmeni }}</a>
+    {% if not forloop.last %}, {% endif %}
+    {% endfor %}
+</td>
+...
+```
+
+- V šabloně `book_detail.html` vytvořte odkaz na galerii autorů:
+
+```html 
+...
+<p>
+    {% for autor in book.autori.all %}
+    <a href="{% url 'author_detail' autor.pk %}">{{ autor.jmeno }} {{ autor.prijmeni }}</a>
+    {% if not forloop.last %}, {% endif %}
+    {% endfor %}
+</p>
+...
+```
+
+- V šabloně `author_detail.html` vytvořte odkaz na galerii autorů:
+
+```html
+...
+<h4 class="text-info">Knihy</h4>
+<hr>
+<ul>
+    {% for kniha in author.kniha_set.all %}
+    <li><a href="{% url 'book_detail' kniha.pk %}">{{ kniha }}</a></li>
+    {% endfor %}
+</ul>
+...
+```
+
+- V šabloně `navbar.html` vytvořte odkaz na domovskou stránku, seznam knih a galerii autorů:
+```html
+...
+<ul class="navbar-nav mr-auto mt-2 mt-lg-0">
+    <li class="nav-item active">
+        <a class="nav-link" href="{% url 'index' %}">Úvodní stránka <span class="sr-only">(current)</span></a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="{% url 'books_list' %}">Knihy</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="{% url 'authors_list' %}">Autoři</a>
+    </li>
+</ul>
+...
+```
+
+7. Spusťte vývojový server a na adrese `http://localhost:8000/knihovna/authors` zobrazte galerii autorů.
+8. Ověřte funkčnost odkazů mezi jednotlivými stránkami.

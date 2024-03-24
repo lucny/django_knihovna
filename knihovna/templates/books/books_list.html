@@ -22,7 +22,7 @@
             <td><strong><a href="{% url 'book_detail' book.pk %}" class="text-info">{{ book.titul.upper }}</a></strong></td>
             <td>
                 {% for autor in book.autori.all %}
-                <a href="#">{{ autor.jmeno|first }}. {{ autor.prijmeni }}</a>
+                <a href="{% url 'author_detail' autor.pk %}">{{ autor.jmeno|first }}. {{ autor.prijmeni }}</a>
                 {% if not forloop.last %}, {% endif %}
                 {% endfor %}
             </td>
