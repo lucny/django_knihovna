@@ -40,6 +40,6 @@ texty* pro zadávající uživatele a možná *chybová hlášení*.
 
 **Příloha:**
 
-![Zaznam recenze v administraci](./docs/img/recenze_zaznam.png)
+![Zaznam recenze v administraci](./docs/img/recenze-zaznam.png)
 
 
