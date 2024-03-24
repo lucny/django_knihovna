@@ -525,9 +525,9 @@ urlpatterns = [
 ]
 ``` 
 
-4. Spusťte vývojový server a na adrese `http://localhost:8000/books/<id knihy>` zobrazte detail knihy.
+4. Spusťte vývojový server a na adrese `http://localhost:8000/knihovna/books/<id knihy>` zobrazte detail knihy.
 
-- Například pro zobrazení detailu knihy s ID 2 bude adresa `http://localhost:8000/books/2`.
+- Například pro zobrazení detailu knihy s ID 2 bude adresa `http://localhost:8000/knihovna/books/2`.
 
 5. Pro zobrazení této stránky ze seznamu knih na adrese `http://localhost:8000/knihovna/books` vytvořte odkaz na detail knihy v šabloně
    `books_list.html`:
