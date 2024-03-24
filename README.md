@@ -101,7 +101,8 @@ Pro každý sloupec je definován typ pole a další parametry, které ovlivňuj
 Podrobnější informace o jednotlivých typech polí naleznete v oficiální dokumentaci Django:
 
 - [Django - Pole modelů](https://docs.djangoproject.com/en/5.0/topics/db/models/#fields)
-  Podrobnější informace o jednotlivých parametrech polí naleznete v oficiální dokumentaci Django:
+  
+Podrobnější informace o jednotlivých parametrech polí naleznete v oficiální dokumentaci Django:
 - [Django - Parametry polí](https://docs.djangoproject.com/en/5.0/ref/models/fields/#field-options)
 
 Součástí modelu `Recenze` jsou následující pole:
@@ -231,7 +232,7 @@ admin.site.register(Recenze)
   registrace by nebylo možné zobrazit a editovat záznamy v administraci.
 
 ---
-## 3. Webová stránka Seznam knih
+### 3. Webová stránka Seznam knih
 
 **Zadání:**
 - Vytvořte v aplikaci novou webovou stránku, která bude na adrese `http://127.0.0.1:8000/knihovna/books`
@@ -408,3 +409,141 @@ urlpatterns = [
 > Každá URL adresa je propojena s konkrétním pohledem, který zpracovává požadavky na danou adresu. 
 > Pohledy mohou být definovány jako funkce nebo třídy a zpracovávají požadavky uživatele, případně zobrazují data z databáze.
 > V případě použití třídových pohledů je třeba pohled předat jako třídu pomocí metody `as_view()`.
+
+---
+### 4. Webová stránka Detail knihy
+
+**Zadání:**
+- Vytvořte v aplikaci novou webovou stránku, která bude na adrese `http://127.0.0.1:8000/books/<id knihy>`
+vypisovat podrobnosti o knize podle následujícího vzoru:
+
+![Detail knihy](./docs/img/detail-knihy.png)
+
+- Stránka bude v nadpisu obsahovat název knihy a pod ním budou responzivně zobrazeny bloky s obrázkem obálky, 
+informace o vydavatelství, roce vydání, žánrech a obsahu knihy.
+
+**Řešení:**
+
+1. Vytvořte nový pohled `BookDetailView` v souboru `views.py`:
+
+```python   
+from django.views.generic import DetailView
+from .models import Kniha
+...
+# Přidání třídy BookDetailView, která dědí z generické třídy DetailView
+# Pohled zobrazuje detail knihy
+class BookDetailView(DetailView):
+    model = Kniha
+    template_name = 'books/book_detail.html'
+    context_object_name = 'book'
+```
+
+> [!NOTE]
+> **Poznámky k řešení:**
+> 
+> - Pohled `BookDetailView` dědí od třídy `DetailView` (
+  viz [Django - DetailView](https://docs.djangoproject.com/en/5.0/ref/class-based-views/generic-display/#detailview)).
+  Tato třída umožňuje zobrazit detailní informace o jednom objektu z databáze.
+> - Atribut `model` určuje, který model bude použit pro získání dat. V tomto případě se jedná o model `Kniha`.
+> - Atribut `template_name` určuje název šablony, která bude použita pro zobrazení dat. V tomto případě se jedná o šablonu
+  `book_detail.html` v adresáři `templates/books`.
+> - Atribut `context_object_name` určuje název proměnné, která bude předána do šablony. V tomto případě se jedná o proměnnou
+  `book`, která bude obsahovat detailní informace o knize.
+
+> [!TIP]
+> Alternativně lze vytvořit pohled pomocí funkce `render()` a předat do šablony detail knihy pomocí slovníku.
+> Příkladem je následující kód:
+> ```python
+> from django.shortcuts import render
+> from .models import Kniha
+> ...
+> def book_detail(request, pk):
+> book = Kniha.objects.get(pk=pk)
+> context = {
+>    'book': book
+> }
+> return render(request, 'books/book_detail.html', context)
+> ```
+> V tomto případě se vytvoří slovník `context` s klíčem `book`, který obsahuje detailní informace o knize. Tento slovník
+> se předá do šablony `book_detail.html` pomocí funkce `render()`.
+
+
+2. Vytvořte šablonu `book_detail.html` v adresáři `templates/books`:
+
+```html
+{% extends 'base.html' %}
+
+{% block title %}Detail knihy: {{ book.titul }}{% endblock %}
+
+{% block content %}
+<h2 class="display-4 text-center">{{ book.titul }}</h2>
+<div class="row bg-dark p-3 mb-2">
+    <div class="col-md-4 text-light">
+        {% if book.obalka %}
+        <img src="{{ book.obalka.url }}" alt="{{ book }}" class="rounded img-fluid">
+        {% endif %}
+        <p class="mt-3">Vydáno: {{ book.vydavatelstvi }}, {{ book.rok_vydani }}</p>
+        <hr>
+        <p>
+            {% for zanr in book.zanry.all %}
+            <a href="#" class="btn btn-info">{{ zanr }}</a>
+            {% endfor %}
+        </p>
+    </div>
+    <div class="col-md-8">
+        <h4 class="text-info">Obsah knihy</h4>
+        <p class="text-light">{{ book.obsah }}</p>
+    </div>
+</div>
+{% endblock %}
+```
+
+> [!NOTE]
+> **Poznámky k řešení:**
+> 
+> - Šablona `book_detail.html` obsahuje bloky `title` a `content`, které rozšiřují základní šablonu `base.html`.
+> - V bloku `title` je nadpis stránky s názvem knihy.
+> - V bloku `content` jsou zobrazeny detailní informace o knize, jako je obrázek obálky, vydavatelství, rok vydání, žánry
+  a obsah knihy.
+> - Obrázek obálky knihy je zobrazen pouze v případě, že je k dispozici. Pro zobrazení obrázku je použit atribut `obalka`
+  s cestou k obrázku.
+> - Informace o vydavatelství a roku vydání jsou zobrazeny v odstavci. Pro zobrazení žánrů je použit cyklus `{% for zanr in
+  book.zanry.all %}`, který postupně zpracovává všechny žánry knihy.
+> - Obsah knihy je zobrazen v odstavci s třídou `text-light`. Pro zobrazení obsahu knihy je použit atribut `obsah`.
+> - Pro zobrazení žánrů je použit Bootstrap a třídy pro vytvoření tlačítek s barvou pozadí.
+
+3. Vytvořte novou URL adresu pro zobrazení detailu knihy v souboru `urls.py` v adresáři aplikace:
+
+```python
+from django.urls import path
+from .views import BookDetailView
+
+urlpatterns = [
+    ...
+    # URL adresa pro zobrazení detailu knihy
+    path('books/<int:pk>', BookDetailView.as_view(), name='book_detail'),
+]
+``` 
+
+4. Spusťte vývojový server a na adrese `http://localhost:8000/books/<id knihy>` zobrazte detail knihy.
+
+- Například pro zobrazení detailu knihy s ID 2 bude adresa `http://localhost:8000/books/2`.
+
+5. Pro zobrazení této stránky ze seznamu knih na adrese `http://localhost:8000/knihovna/books` vytvořte odkaz na detail knihy v šabloně
+   `books_list.html`:
+
+```html
+...
+<td><strong><a href="{% url 'book_detail' book.pk %}" class="text-info">{{ book.titul.upper }}</a></strong></td>
+...
+```
+
+> [!NOTE]
+> **Poznámky k řešení:**
+> 
+> - Pro vytvoření odkazu na detail knihy je použita šablona `{% url 'book_detail' book.pk %}`. Tato šablona generuje URL
+  adresu pro zobrazení detailu knihy s konkrétním ID.
+> - Parametr `book.pk` obsahuje primární klíč (ID) knihy, který je použit pro identifikaci konkrétní knihy.
+> - Po kliknutí na odkaz se zobrazí stránka s detailními informacemi o dané knize.
+> - Podrobnější informace o generování URL adres naleznete v oficiální dokumentaci Django:
+> [Django - Funkce URL](https://docs.djangoproject.com/en/5.0/ref/templates/builtins/#url)

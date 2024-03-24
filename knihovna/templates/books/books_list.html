@@ -19,7 +19,7 @@
       <tbody>
       {% for book in books %}
         <tr>
-            <td><strong><a href="#" class="text-info">{{ book.titul.upper }}</a></strong></td>
+            <td><strong><a href="{% url 'book_detail' book.pk %}" class="text-info">{{ book.titul.upper }}</a></strong></td>
             <td>
                 {% for autor in book.autori.all %}
                 <a href="#">{{ autor.jmeno|first }}. {{ autor.prijmeni }}</a>

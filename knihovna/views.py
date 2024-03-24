@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from django.views.generic import ListView
+from django.views.generic import ListView, DetailView
 
 from .models import Kniha, Zanr
 
@@ -21,3 +21,11 @@ class BooksListView(ListView):
     template_name = 'books/books_list.html'
     context_object_name = 'books'
     ordering = ['-rok_vydani']
+
+
+# Přidání třídy BookDetailView, která dědí z generické třídy DetailView
+# Pohled zobrazuje detail knihy
+class BookDetailView(DetailView):
+    model = Kniha
+    template_name = 'books/book_detail.html'
+    context_object_name = 'book'
