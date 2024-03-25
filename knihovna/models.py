@@ -1,3 +1,4 @@
+from django.contrib.auth.models import User
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 
@@ -67,3 +68,31 @@ class Kniha(models.Model):
 
     def __str__(self):
         return f'{self.titul} ({self.rok_vydani})'
+
+
+# Vytvoření modelu Recenze
+class Recenze(models.Model):
+    text = models.TextField(verbose_name='Text recenze', help_text='Vložte text recenze')
+    kniha = models.ForeignKey(Kniha, on_delete=models.RESTRICT, verbose_name='Kniha')
+    recenzent = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='Recenzent')
+    HODNOCENI_KNIHY = (
+        (0, ''),
+        (1, '*'),
+        (2, '**'),
+        (3, '***'),
+        (4, '****'),
+        (5, '*****'),
+    )
+    hodnoceni = models.PositiveSmallIntegerField(verbose_name='Hodnocení', default=3, choices=HODNOCENI_KNIHY)
+    upraveno = models.DateTimeField(auto_now_add=True)
+
+    # Vnitřní třída Meta s dalšími metainformacemi o modelu
+    class Meta:
+        ordering = ['-hodnoceni']
+        verbose_name = 'Recenze'
+        verbose_name_plural = 'Recenze'
+
+    # Metoda pro textovou reprezentaci objektu
+    def __str__(self):
+        return (f'{self.recenzent.last_name if self.recenzent.last_name else self.recenzent}: {self.text}, '
+                f'hodnocení: {self.hodnoceni}, ({self.upraveno.strftime("%Y-%m-%d %H:%M:%S")})')

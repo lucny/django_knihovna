@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+
+{% block title %}Dynamická sada{% endblock %}
+
+{% block content %}
+    <h1>Dynamická sada</h1>
+    <table class="table table-bordered table-striped">
+        <thead>
+            <tr>
+                {% for sloupec in sloupce %}
+                    <th>{{ sloupec }}</th>
+                {% endfor %}
+            </tr>
+        </thead>
+        <tbody>
+            {% for objekt in data %}
+                <tr>
+                    {% for attrib in objekt.values %}
+                        <td>{{ attrib }}</td>
+                    {% endfor %}
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}
+```
