@@ -38,7 +38,7 @@
 
 ## Řešení praktických úloh
 
-### 1. Vytvoření nového modelu Rezervace
+### 1. Vytvoření nového modelu Recenze
 
 **Zadání:**
 
