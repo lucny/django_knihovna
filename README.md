@@ -671,6 +671,10 @@ Zajistěte rovněž vytvoření vazby mezi knihou a vydavatelstvím, podobně i 
 
 ### Praktické úkoly: Aktualizace záznamu v databázi pomocí ORM v Django
 1. Aktualizujte pomocí ORM v Django záznam autora z předchozího úkolu vložením věty do jeho biografie.
+```bash 
+
+```
+
 2. Aktualizujte pomocí ORM v Django záznam knihy z předchozího úkolu změnou počtu stran na 400 a roku vydání na 2022.
 
 ### Praktické úkoly: Mazání záznamu z databáze pomocí ORM v Django
@@ -683,18 +687,28 @@ Zajistěte rovněž vytvoření vazby mezi knihou a vydavatelstvím, podobně i 
 ```bash
 >>> 
 ```
+Očekávaný výsledek dotazu najdete v souboru PDF:
+
+[pdf](./pdf/ORM-ukol1.pdf)
 
 2. Vypište pomocí ORM všechny záznamy z tabulky `Kniha`, které byly vydány po roce 2000 a patří do žánru "román". Seřaďte výsledky podle roku vydání sestupně.
 
 ```bash
 >>> 
 ```
+Očekávaný výsledek dotazu najdete v souboru PDF:
 
-3. Vypište pomocí ORM všechny autory, jejichž jméno začíná na písmeno "B" a příjmení na "V". Seřaďte výsledky podle příjmení vzestupně.
+[pdf](./pdf/ORM-ukol2.pdf)
+
+3. Vypište pomocí ORM všechny autory, jejichž jméno začíná na písmeno "B" **nebo** příjmení na "V". Seřaďte výsledky podle příjmení vzestupně.
 
 ```bash
 >>> 
 ```
+Očekávaný výsledek dotazu najdete v souboru PDF:
+
+[pdf](./pdf/ORM-ukol3.pdf)
+
 
 4. Vypište pomocí ORM všechny recenze, které byly vytvořeny v únoru 2024, vyjma těch, které byly napsány uživateli, 
 jejichž email obsahuje doménu "ucitel.cz". Zobrazeny budou sloupce `id`, `text`, `upraveno`, `email recenzenta` a `název knihy`.
@@ -703,17 +717,28 @@ Zobrazení výsledků seřaďte od nejnovějších recenzí a omezte na prvních
 ```bash
 >>> 
 ```
+Očekávaný výsledek dotazu najdete v souboru PDF:
+
+[pdf](./pdf/ORM-ukol4.pdf)
+
 5. Vypište pomocí ORM počty recenzí seskupené podle recenzentů. Výsledky zobrazte ve formátu `recenzent` (id, příjmení, jméno) a `pocet_recenzi`. 
 Seřaďte výsledky podle počtu recenzí sestupně, sekundárně podle příjmení recenzenta vzestupně.
 
 ```bash
 >>> 
 ```
+Očekávaný výsledek dotazu najdete v souboru PDF:
+
+[pdf](./pdf/ORM-ukol5.pdf)
 
 6. Vypište pomocí ORM průměrné hodnocení všech knih, které byly vydány před rokem 2000.
 
 ```bash
 >>> 
+```
+Očekávaný výsledek:
+```bash
+{'prumerny_rating': 3.12}
 ```
    
 7. Vypište pomocí ORM součty stran všech knih a počet knih v databázi, na kterých se podíleli bratři Čapkové.
@@ -721,12 +746,18 @@ Seřaďte výsledky podle počtu recenzí sestupně, sekundárně podle příjme
 ```bash
 >>> 
 ```
+Očekávaný výsledek:
+```bash
+{'celkem_stran': 845, 'celkem_knih': 5}
+```
 8. Vypište pomocí ORM sestavu, která bude obsahovat sloupce: název knihy, nejvyšší hodnocení, nejnižší hodnocení, datum poslední recenze.
 
 ```bash
 >>> 
 ```
+Očekávaný výsledek dotazu najdete v souboru PDF:
 
+[pdf](./pdf/ORM-ukol8.pdf)
 
 
 
