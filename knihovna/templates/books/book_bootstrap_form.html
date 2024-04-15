@@ -6,10 +6,23 @@
     <h1>Editace knihy</h1>
     {# Alternativní formulář s využitím Bootstrapu #}
     <form method="post" enctype="multipart/form-data" class="form">
+        {% csrf_token %}
+        {% if form.non_field_errors %}
+        <div class="alert alert-danger">
+            {% for error in form.non_field_errors %}
+                <p>{{ error }}</p>
+            {% endfor %}
+        </div>
+        {% endif %}
         <div class="form-group row">
             <label for="id_titul" class="col-sm-2 col-form-label">Název</label>
             <div class="col-sm-10">
-                <input type="text" name="titul" maxlength="100" required aria-describedby="id_titul_helptext" id="id_titul" class="form-control" value="{% if not form.titul.value == 'None' %}{{ form.titul.value }}{% endif %}">
+                <input type="text" name="titul" maxlength="100" required aria-describedby="id_titul_helptext" id="id_titul" class="form-control" value="{% if not form.titul.value == None %}{{ form.titul.value }}{% endif %}">
+                {% if form.titul.errors %}
+                    {% for error in form.titul.errors %}
+                        <div class="alert alert-danger">{{ error }}</div>
+                    {% endfor %}
+                {% endif %}
             </div>
         </div>
         <div class="form-group row">
@@ -20,12 +33,22 @@
                         <option value="{{ autor.pk }}" {% if autor.pk in form.autori.value %}selected{% endif %}>{{ autor }}</option>
                     {% endfor %}
                 </select>
+                {% if form.autori.errors %}
+                    {% for error in form.autori.errors %}
+                        <div class="alert alert-danger">{{ error }}</div>
+                    {% endfor %}
+                {% endif %}
             </div>
         </div>
         <div class="form-group row">
             <label for="id_obsah" class="col-sm-2 col-form-label">Obsah</label>
             <div class="col-sm-10">
-                <textarea name="obsah" rows="10" aria-describedby="id_obsah_helptext" id="id_obsah" class="form-control">{% if not form.titul.value == 'None' %}{{ form.obsah.value }}{% endif %}</textarea>
+                <textarea name="obsah" rows="10" aria-describedby="id_obsah_helptext" id="id_obsah" class="form-control">{% if not form.titul.value == None %}{{ form.obsah.value }}{% endif %}</textarea>
+                {% if form.obsah.errors %}
+                    {% for error in form.obsah.errors %}
+                        <div class="alert alert-danger">{{ error }}</div>
+                    {% endfor %}
+                {% endif %}
             </div>
         </div>
         <div class="form-group row">
@@ -36,18 +59,33 @@
                         <option value="{{ zanr.pk }}" {% if zanr.pk in form.zanry.value %}selected{% endif %}>{{ zanr }}</option>
                     {% endfor %}
                 </select>
+                {% if form.zanry.errors %}
+                    {% for error in form.zanry.errors %}
+                        <div class="alert alert-danger">{{ error }}</div>
+                    {% endfor %}
+                {% endif %}
             </div>
         </div>
         <div class="form-group row">
             <label for="id_rok_vydani" class="col-sm-2 col-form-label">Rok vydání</label>
             <div class="col-sm-10">
                 <input type="number" name="rok_vydani" id="id_rok_vydani" aria-describedby="id_pocet_stran_helptext" class="form-control" value="{{ form.rok_vydani.value }}" required>
+                {% if form.rok_vydani.errors %}
+                    {% for error in form.rok_vydani.errors %}
+                        <div class="alert alert-danger">{{ error }}</div>
+                    {% endfor %}
+                {% endif %}
             </div>
         </div>
         <div class="form-group row">
             <label for="id_pocet_stran" class="col-sm-2 col-form-label">Počet stran</label>
             <div class="col-sm-10">
                 <input type="number" name="pocet_stran" min="0" aria-describedby="id_pocet_stran_helptext" id="id_pocet_stran" class="form-control" value="{{ form.pocet_stran.value }}">
+                {% if form.pocet_stran.errors %}
+                    {% for error in form.pocet_stran.errors %}
+                        <div class="alert alert-danger">{{ error }}</div>
+                    {% endfor %}
+                {% endif %}
             </div>
         </div>
         <div class="form-group row">
@@ -58,6 +96,11 @@
                         <option value="{{ value }}" {% if form.vydavatelstvi.value == value %}selected{% endif %}>{{ name }}</option>
                     {% endfor %}
                 </select>
+                {% if form.vydavatelstvi.errors %}
+                    {% for error in form.vydavatelstvi.errors %}
+                        <div class="alert alert-danger">{{ error }}</div>
+                    {% endfor %}
+                {% endif %}
             </div>
         </div>
         {# Zobrazí obálku, pokud už existuje #}
@@ -65,6 +108,11 @@
                 <label class="col-sm-2 col-form-label">Obálka</label>
                 <div class="col-sm-5">
                     {{ form.obalka }}
+                    {% if form.obalka.errors %}
+                        {% for error in form.obalka.errors %}
+                            <div class="alert alert-danger">{{ error }}</div>
+                        {% endfor %}
+                    {% endif %}
                 </div>
                 {% if form.instance.obalka %}
                 <div class="col-sm-5">
@@ -73,13 +121,10 @@
                 {% endif %}
             </div>
         <div class="form-group row">
-        </div>
-        <div class="form-group row">
             <div class="col-sm-10 offset-sm-2">
                 <button type="submit" class="btn btn-primary">Uložit</button>
             </div>
         </div>
-        {% csrf_token %}
     </form>
 {% endblock %}
 
