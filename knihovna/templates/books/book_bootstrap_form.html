@@ -1,0 +1,85 @@
+{% extends 'base.html' %}
+
+{% block title %}Editace knihy{% endblock %}
+
+{% block content %}
+    <h1>Editace knihy</h1>
+    {# Alternativní formulář s využitím Bootstrapu #}
+    <form method="post" enctype="multipart/form-data" class="form">
+        <div class="form-group row">
+            <label for="id_titul" class="col-sm-2 col-form-label">Název</label>
+            <div class="col-sm-10">
+                <input type="text" name="titul" maxlength="100" required aria-describedby="id_titul_helptext" id="id_titul" class="form-control" value="{% if not form.titul.value == 'None' %}{{ form.titul.value }}{% endif %}">
+            </div>
+        </div>
+        <div class="form-group row">
+            <label for="id_autori" class="col-sm-2 col-form-label">Autoři</label>
+            <div class="col-sm-10">
+                <select name="autori" id="id_autori" class="form-control" multiple>
+                    {% for autor in form.fields.autori.queryset %}
+                        <option value="{{ autor.pk }}" {% if autor.pk in form.autori.value %}selected{% endif %}>{{ autor }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+        <div class="form-group row">
+            <label for="id_obsah" class="col-sm-2 col-form-label">Obsah</label>
+            <div class="col-sm-10">
+                <textarea name="obsah" rows="10" aria-describedby="id_obsah_helptext" id="id_obsah" class="form-control">{% if not form.titul.value == 'None' %}{{ form.obsah.value }}{% endif %}</textarea>
+            </div>
+        </div>
+        <div class="form-group row">
+            <label for="id_zanry" class="col-sm-2 col-form-label">Žánry</label>
+            <div class="col-sm-10">
+                <select name="zanry" id="id_zanry" class="form-control" multiple>
+                    {% for zanr in form.fields.zanry.queryset %}
+                        <option value="{{ zanr.pk }}" {% if zanr.pk in form.zanry.value %}selected{% endif %}>{{ zanr }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+        <div class="form-group row">
+            <label for="id_rok_vydani" class="col-sm-2 col-form-label">Rok vydání</label>
+            <div class="col-sm-10">
+                <input type="number" name="rok_vydani" id="id_rok_vydani" aria-describedby="id_pocet_stran_helptext" class="form-control" value="{{ form.rok_vydani.value }}" required>
+            </div>
+        </div>
+        <div class="form-group row">
+            <label for="id_pocet_stran" class="col-sm-2 col-form-label">Počet stran</label>
+            <div class="col-sm-10">
+                <input type="number" name="pocet_stran" min="0" aria-describedby="id_pocet_stran_helptext" id="id_pocet_stran" class="form-control" value="{{ form.pocet_stran.value }}">
+            </div>
+        </div>
+        <div class="form-group row">
+            <label for="id_vydavatelstvi" class="col-sm-2 col-form-label">Vydavatelství</label>
+            <div class="col-sm-10">
+                <select name="vydavatelstvi" id="id_vydavatelstvi" class="form-control">
+                    {% for value, name in form.fields.vydavatelstvi.choices %}
+                        <option value="{{ value }}" {% if form.vydavatelstvi.value == value %}selected{% endif %}>{{ name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+        {# Zobrazí obálku, pokud už existuje #}
+            <div class="form-group  row">
+                <label class="col-sm-2 col-form-label">Obálka</label>
+                <div class="col-sm-5">
+                    {{ form.obalka }}
+                </div>
+                {% if form.instance.obalka %}
+                <div class="col-sm-5">
+                    <img src="{{ form.instance.obalka.url }}" alt="Obálka" class="img-thumbnail">
+                </div>
+                {% endif %}
+            </div>
+        <div class="form-group row">
+        </div>
+        <div class="form-group row">
+            <div class="col-sm-10 offset-sm-2">
+                <button type="submit" class="btn btn-primary">Uložit</button>
+            </div>
+        </div>
+        {% csrf_token %}
+    </form>
+{% endblock %}
+

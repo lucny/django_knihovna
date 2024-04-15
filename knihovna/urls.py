@@ -1,6 +1,7 @@
 from django.urls import path
 # Import pohledů pro zobrazení galerie autorů a detailu autora
-from .views import BookDetailView, BooksListView, AuthorsListView, AuthorDetailView, index
+from .views import BookDetailView, BooksListView, AuthorsListView, AuthorDetailView, index, BookCreateView, \
+    BookUpdateView, BookDeleteView
 
 urlpatterns = [
     # URL adresa pro zobrazení domovské stránky
@@ -13,4 +14,10 @@ urlpatterns = [
     path('authors/', AuthorsListView.as_view(), name='authors_list'),
     # URL adresa pro zobrazení detailu autora
     path('authors/<int:pk>', AuthorDetailView.as_view(), name='author_detail'),
+    # URL adresa pro vložení knihy
+    path('books/add/', BookCreateView.as_view(), name='book_add'),
+    # URL adresa pro aktualizaci knihy
+    path('books/<int:pk>/update/', BookUpdateView.as_view(), name='book_update'),
+    # URL adresa pro smazání knihy
+    path('books/<int:pk>/delete/', BookDeleteView.as_view(), name='book_delete'),
 ]

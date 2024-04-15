@@ -2,10 +2,13 @@
 from django.db.models import Count
 # Import metody render pro vykreslení šablon
 from django.shortcuts import render
+from django.urls import reverse_lazy
 # Import generických tříd ListView a DetailView z modulu django.views.generic
-from django.views.generic import ListView, DetailView
+from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 
+from .forms import KnihaForm
 from .models import Kniha, Zanr, Autor
+
 
 # Pohled pro zobrazení domovské stránky
 def index(request):
@@ -35,6 +38,36 @@ class BookDetailView(DetailView):
     context_object_name = 'book'
 
 
+# Přidání třídy BookCreateView, která dědí z generické třídy CreateView
+# Pohled zobrazuje formulář pro vložení knihy
+class BookCreateView(CreateView):
+    model = Kniha
+    template_name = 'books/book_bootstrap_form.html'
+    fields = '__all__'
+    form = KnihaForm
+    success_url = reverse_lazy('books_list')
+
+
+# Přidání třídy BookUpdateView, která dědí z generické třídy UpdateView
+# Pohled zobrazuje formulář pro aktualizaci knihy
+class BookUpdateView(UpdateView):
+    model = Kniha
+    template_name = 'books/book_bootstrap_form.html'
+    fields = '__all__'
+    form = KnihaForm
+    context_object_name = 'book'
+    success_url = reverse_lazy('books_list')
+
+
+# Přidání třídy BookDeleteView, která dědí z generické třídy DeleteView
+# Pohled zobrazuje formulář pro smazání knihy
+class BookDeleteView(DeleteView):
+    model = Kniha
+    template_name = 'books/book_confirm_delete.html'
+    context_object_name = 'book'
+    success_url = reverse_lazy('books_list')
+
+
 # Přidání třídy AuthorsListView, která dědí z generické třídy ListView
 # Pohled zobrazuje seznam autorů
 class AuthorsListView(ListView):
@@ -50,3 +83,5 @@ class AuthorDetailView(DetailView):
     model = Autor
     template_name = 'authors/author_detail.html'
     context_object_name = 'author'
+
+
