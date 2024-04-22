@@ -1,12 +1,13 @@
 # Import třídy Count pro agregaci dat
 from django.db.models import Count
+from django.http import HttpResponseRedirect
 # Import metody render pro vykreslení šablon
 from django.shortcuts import render
 from django.urls import reverse_lazy
 # Import generických tříd ListView a DetailView z modulu django.views.generic
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 
-from .forms import KnihaForm
+from .forms import KnihaForm, BookForm
 from .models import Kniha, Zanr, Autor
 
 
@@ -42,9 +43,10 @@ class BookDetailView(DetailView):
 # Pohled zobrazuje formulář pro vložení knihy
 class BookCreateView(CreateView):
     model = Kniha
-    template_name = 'books/book_bootstrap_form.html'
-    fields = '__all__'
-    form = KnihaForm
+    # template_name = 'books/book_bootstrap_form.html'
+    template_name = 'books/book_form_crispy.html'
+    # fields = '__all__'
+    form_class = BookForm
     success_url = reverse_lazy('books_list')
 
 
