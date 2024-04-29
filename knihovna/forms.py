@@ -1,6 +1,6 @@
 from crispy_forms.bootstrap import FormActions
 from crispy_forms.helper import FormHelper
-from crispy_forms.layout import Layout, Fieldset, ButtonHolder, Submit
+from crispy_forms.layout import Layout, Fieldset, ButtonHolder, Submit, Button
 from django import forms
 from .models import Kniha
 
@@ -82,6 +82,8 @@ class BookForm(forms.ModelForm):
             FormActions(
                 ButtonHolder(
                     Submit('submit', 'Uložit', css_class='btn-primary mr-2'),
+                    Button('cancel', 'Storno', css_class='btn-secondary',
+                           onclick='window.history.back();'),
                     css_class='d-flex'
                 )
             ),
