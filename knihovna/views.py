@@ -1,4 +1,5 @@
 # Import třídy Count pro agregaci dat
+from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin, UserPassesTestMixin
 from django.db.models import Count
 from django.http import HttpResponseRedirect
 # Import metody render pro vykreslení šablon
@@ -41,33 +42,46 @@ class BookDetailView(DetailView):
 
 # Přidání třídy BookCreateView, která dědí z generické třídy CreateView
 # Pohled zobrazuje formulář pro vložení knihy
-class BookCreateView(CreateView):
+class BookCreateView(LoginRequiredMixin, PermissionRequiredMixin, UserPassesTestMixin, CreateView):
     model = Kniha
     # template_name = 'books/book_bootstrap_form.html'
     template_name = 'books/book_form_crispy.html'
     # fields = '__all__'
     form_class = BookForm
     success_url = reverse_lazy('books_list')
+    permission_required = ["knihovna.add_kniha"]
 
 
 # Přidání třídy BookUpdateView, která dědí z generické třídy UpdateView
 # Pohled zobrazuje formulář pro aktualizaci knihy
-class BookUpdateView(UpdateView):
+class BookUpdateView(LoginRequiredMixin, PermissionRequiredMixin, UserPassesTestMixin, UpdateView):
     model = Kniha
     template_name = 'books/book_bootstrap_form.html'
     fields = '__all__'
     form = KnihaForm
     context_object_name = 'book'
     success_url = reverse_lazy('books_list')
+    permission_required = ["knihovna.change_kniha"]
+
+    def test_func(self):
+        kniha = self.get_object()
+        return kniha.editor == self.request.user
+
 
 
 # Přidání třídy BookDeleteView, která dědí z generické třídy DeleteView
 # Pohled zobrazuje formulář pro smazání knihy
-class BookDeleteView(DeleteView):
+class BookDeleteView(LoginRequiredMixin, PermissionRequiredMixin, UserPassesTestMixin, DeleteView):
     model = Kniha
     template_name = 'books/book_confirm_delete.html'
     context_object_name = 'book'
     success_url = reverse_lazy('books_list')
+    permission_required = ["knihovna.delete_kniha"]
+
+    def test_func(self):
+        kniha = self.get_object()
+        return kniha.editor == self.request.user
+
 
 
 # Přidání třídy AuthorsListView, která dědí z generické třídy ListView

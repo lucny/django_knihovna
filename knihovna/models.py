@@ -13,6 +13,7 @@ class Autor(models.Model):
     umrti = models.DateField(blank=True, null=True, verbose_name='Datum úmrtí')
     biografie = models.TextField(blank=True, verbose_name='Životopis')
     fotografie = models.ImageField(upload_to='autori', verbose_name='Fotografie')
+    editor = models.ForeignKey(User, on_delete=models.RESTRICT, default=1)
 
     class Meta:
         ordering = ['prijmeni', 'jmeno']
@@ -50,6 +51,11 @@ class Vydavatelstvi(models.Model):
         return f'{self.nazev}'
 
 
+class BookManager(models.Manager):
+    def for_user(self, user):
+        return self.get_queryset().filter(editor=user)
+
+
 class Kniha(models.Model):
     titul = models.CharField(max_length=100, verbose_name='Titul knihy', help_text='Zadejte titul knihy',
                              error_messages={'blank': 'Titul knihy musí být vyplněn'})
@@ -62,8 +68,11 @@ class Kniha(models.Model):
                                              verbose_name='Rok vydání', help_text='Zadejte rok vydání (1500 - 2100)')
     obalka = models.ImageField(upload_to='obalky', verbose_name='Obálka knihy')
     zanry = models.ManyToManyField(Zanr)
+    editor = models.ForeignKey(User, on_delete=models.RESTRICT, default=1)
     vydavatelstvi = models.ForeignKey('Vydavatelstvi', on_delete=models.CASCADE, blank=True, null=True,
                                       verbose_name='Vydavatelství')
+
+    objects = BookManager()
 
     class Meta:
         ordering = ['titul']

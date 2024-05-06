@@ -30,12 +30,22 @@
             <td>{{ book.vydavatelstvi }}</td>
             <td class="text-right">{{ book.rok_vydani }}</td>
             <td class="text-right">{{ book.pocet_stran }}</td>
-            <td><a href="{% url 'book_update' book.id %}" class="btn btn-primary">Editovat</a> <a href="{% url 'book_delete' book.id %}" class="btn btn-danger">Smazat</a></td>
+            <td>
+                {% if perms.knihovna.change_kniha and user == book.editor %}
+                <a href="{% url 'book_update' book.id %}" class="btn btn-primary">Editovat</a>
+                {% endif %}
+                {% if perms.knihovna.delete_kniha and user == book.editor %}
+                <a href="{% url 'book_delete' book.id %}" class="btn btn-danger">Smazat</a>
+                {% endif %}
+            </td>
         </tr>
       {% endfor %}
       </tbody>
     </table>
+    <p>{{ perms.knihovna }}</p>
+    {% if perms.knihovna.add_kniha %}
     <p><a href="{% url 'book_add' %}" class="btn btn-success">Nová kniha</a></p>
+    {% endif %}
     </div>
   </div>
 {% endblock %}

@@ -1,0 +1,17 @@
+{% extends "admin/base.html" %}
+{% load static %}
+
+{% block extrastyle %}
+    <link rel="stylesheet" href="{% static 'bootstrap/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/custom_admin.css' %}">
+{% endblock %}
+
+{% block header %}
+    {% include 'page/header.html' %}
+    {{ block.super }}
+{% endblock %}
+
+{% block footer %}
+    {% include 'page/footer.html' %}
+{% endblock %}

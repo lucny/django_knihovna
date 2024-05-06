@@ -88,3 +88,15 @@ class BookForm(forms.ModelForm):
                 )
             ),
         )
+
+
+class KnihaAdminForm(forms.ModelForm):
+    class Meta:
+        model = Kniha
+        fields = '__all__'
+
+    def __init__(self, *args, **kwargs):
+        super(KnihaAdminForm, self).__init__(*args, **kwargs)
+        if not self.instance.editor.is_superuser:
+            self.fields['editor'].widget = forms.HiddenInput()
+            self.fields['editor'].disabled = True

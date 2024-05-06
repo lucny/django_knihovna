@@ -21,6 +21,7 @@ from django.views.generic import RedirectView
 from . import settings
 
 urlpatterns = [
+    # path('grappelli/', include('grappelli.urls')),  # grappelli URLS
     path('admin/', admin.site.urls),
     path('knihovna/', include('knihovna.urls')),
     path('', RedirectView.as_view(url='knihovna/')),
