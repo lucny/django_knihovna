@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+
+{% block title %}Galerie autorů{% endblock %}
+
+{% block content %}
+<h2 class="mt-3 mb-3">Galerie autorů</h2>
+
+<div class="row">
+    {% for autor in autori %}
+    <div class="col-12 col-sm-6 col-lg-4 mb-4">
+        <div class="card h-100 shadow-sm">
+            <img src="{{ autor.fotografie.url }}" class="card-img-top" alt="{{ autor.jmeno }} {{ autor.prijmeni }}">
+            <div class="card-body d-flex flex-column">
+                <h5 class="card-title">{{ autor.jmeno }} {{ autor.prijmeni }}</h5>
+                <p class="card-text text-muted mb-3">
+                    {% if autor.narozeni %}{{ autor.narozeni|date:'j. n. Y' }}{% else %}?{% endif %}
+                    –
+                    {% if autor.umrti %}{{ autor.umrti|date:'j. n. Y' }}{% else %}dosud{% endif %}
+                </p>
+                <a href="{% url 'author_detail' autor.pk %}" class="btn btn-outline-info mt-auto">Detail autora</a>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+
+{% block title %}Detail knihy{% endblock %}
+
+{% block content %}
+<div class="row mt-3 mb-4">
+    <div class="col-12 col-md-4 mb-3">
+        <img src="{{ kniha.obalka.url }}" alt="{{ kniha.titul }}" class="img-fluid rounded border book-cover">
+    </div>
+    <div class="col-12 col-md-8">
+        <h2>{{ kniha.titul }}</h2>
+
+        <p class="mb-1"><strong>Rok vydání:</strong> {{ kniha.rok_vydani|default:'-' }}</p>
+        <p class="mb-1"><strong>Počet stran:</strong> {{ kniha.pocet_stran|default:'-' }}</p>
+        <p class="mb-1"><strong>Vydavatelství:</strong> {{ kniha.vydavatelstvi.nazev|default:'-' }}</p>
+
+        <p class="mt-3"><strong>Autoři:</strong>
+            {% for autor in kniha.autori.all %}
+                <a href="{% url 'author_detail' autor.pk %}">{{ autor.jmeno }} {{ autor.prijmeni }}</a>{% if not forloop.last %}, {% endif %}
+            {% empty %}
+                <span class="text-muted">Bez autora</span>
+            {% endfor %}
+        </p>
+
+        <p><strong>Žánry:</strong>
+            {% for zanr in kniha.zanry.all %}
+                <span class="badge badge-info">{{ zanr.nazev }}</span>
+            {% empty %}
+                <span class="text-muted">Bez žánru</span>
+            {% endfor %}
+        </p>
+
+        <hr>
+        <h5>Obsah</h5>
+        <p>{{ kniha.obsah|default:'Obsah není vyplněn.' }}</p>
+    </div>
+</div>
+
+<h4 class="mt-4">Recenze</h4>
+<div class="list-group mb-4">
+    {% for recenze in kniha.recenze.all %}
+    <div class="list-group-item">
+        <h6 class="mb-1">{{ recenze.recenzent }} — {{ recenze.get_hodnoceni_display }}</h6>
+        <small class="text-muted">Naposledy upraveno: {{ recenze.upraveno|date:'j. n. Y H:i' }}</small>
+        <p class="mb-0 mt-2">{{ recenze.text }}</p>
+    </div>
+    {% empty %}
+    <div class="list-group-item text-muted">K této knize zatím nejsou žádné recenze.</div>
+    {% endfor %}
+</div>
+{% endblock %}

@@ -18,11 +18,13 @@ from django.contrib import admin
 from django.urls import path, include
 from django.views.generic import RedirectView
 
+from knihovna import views as knihovna_views
 from . import settings
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('knihovna/', include('knihovna.urls')),
+    path('books/<int:pk>/', knihovna_views.book_detail, name='book_detail_alias'),
     path('', RedirectView.as_view(url='knihovna/')),
 ]
 

@@ -67,3 +67,56 @@ class Kniha(models.Model):
 
     def __str__(self):
         return f'{self.titul} ({self.rok_vydani})'
+
+
+class Recenze(models.Model):
+    HODNOCENI_CHOICES = (
+        (0, '☆☆☆☆☆'),
+        (1, '★☆☆☆☆'),
+        (2, '★★☆☆☆'),
+        (3, '★★★☆☆'),
+        (4, '★★★★☆'),
+        (5, '★★★★★'),
+    )
+
+    recenzent = models.ForeignKey(
+        Autor,
+        on_delete=models.CASCADE,
+        related_name='recenze',
+        verbose_name='Recenzent',
+        help_text='Vyberte recenzenta',
+        error_messages={'blank': 'Recenzent musí být vybrán'}
+    )
+    kniha = models.ForeignKey(
+        Kniha,
+        on_delete=models.CASCADE,
+        related_name='recenze',
+        verbose_name='Kniha',
+        help_text='Vyberte recenzovanou knihu',
+        error_messages={'blank': 'Kniha musí být vybrána'}
+    )
+    text = models.TextField(
+        verbose_name='Text recenze',
+        help_text='Napište text recenze',
+        error_messages={'blank': 'Text recenze je povinný'}
+    )
+    hodnoceni = models.IntegerField(
+        choices=HODNOCENI_CHOICES,
+        default=3,
+        verbose_name='Hodnocení',
+        help_text='Vyberte hodnocení od 0 do 5'
+    )
+    upraveno = models.DateTimeField(
+        auto_now=True,
+        verbose_name='Naposledy upraveno',
+        help_text='Datum poslední úpravy se nastavuje automaticky'
+    )
+
+    class Meta:
+        ordering = ['-hodnoceni']
+        verbose_name = 'Recenze'
+        verbose_name_plural = 'Recenze'
+
+    def __str__(self):
+        hvezdy = dict(self.HODNOCENI_CHOICES).get(self.hodnoceni, '')
+        return f'{self.recenzent} | {self.text[:40]} | {self.upraveno:%d.%m.%Y %H:%M} | {hvezdy}'
