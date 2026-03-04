@@ -6,14 +6,20 @@
     </button>
     <div class="collapse navbar-collapse" id="collapsibleNavId">
         <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
-            <li class="nav-item">
+            <li class="nav-item {% if request.resolver_match.url_name == 'index' %}active{% endif %}">
                 <a class="nav-link" href="{% url 'index' %}">Úvodní stránka</a>
             </li>
-            <li class="nav-item">
+            <li class="nav-item {% if request.resolver_match.url_name == 'book_list' or request.resolver_match.url_name == 'book_detail' %}active{% endif %}">
                 <a class="nav-link" href="{% url 'book_list' %}">Knihy</a>
             </li>
-            <li class="nav-item">
+            <li class="nav-item {% if request.resolver_match.url_name == 'author_list' or request.resolver_match.url_name == 'author_detail' %}active{% endif %}">
                 <a class="nav-link" href="{% url 'author_list' %}">Autoři</a>
+            </li>
+            <li class="nav-item {% if request.resolver_match.url_name == 'loans_list' or request.resolver_match.url_name == 'loan_detail' %}active{% endif %}">
+                <a class="nav-link" href="{% url 'loans_list' %}">Výpůjčky</a>
+            </li>
+            <li class="nav-item {% if request.resolver_match.url_name == 'readers_list' or request.resolver_match.url_name == 'reader_detail' %}active{% endif %}">
+                <a class="nav-link" href="{% url 'readers_list' %}">Čtenáři</a>
             </li>
         </ul>
     </div>

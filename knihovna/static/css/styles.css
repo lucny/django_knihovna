@@ -8,6 +8,10 @@ main.container {
     min-height: 70vh;
 }
 
+.navbar .nav-item.active .nav-link {
+    font-weight: 600;
+}
+
 .table td,
 .table th {
     vertical-align: middle;
@@ -25,6 +29,14 @@ main.container {
     width: 100%;
 }
 
+.loan-note {
+    white-space: pre-line;
+}
+
+.badge.badge-warning {
+    color: #212529;
+}
+
 @media (max-width: 767.98px) {
     header {
         background-position: center 10px;
@@ -33,5 +45,9 @@ main.container {
 
     .card-img-top {
         height: 220px;
+    }
+
+    .table {
+        font-size: 0.92rem;
     }
 }

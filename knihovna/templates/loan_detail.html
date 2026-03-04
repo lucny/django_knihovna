@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+
+{% block title %}Detail výpůjčky{% endblock %}
+
+{% block content %}
+<div class="row mt-3 mb-4">
+    <div class="col-12 col-lg-8">
+        <h2>Detail výpůjčky</h2>
+
+        <ul class="list-group mb-3">
+            <li class="list-group-item"><strong>Čtenář:</strong> {{ loan.ctenar }}</li>
+            <li class="list-group-item">
+                <strong>Kniha:</strong>
+                <a href="{% url 'book_detail' loan.kniha.pk %}">{{ loan.kniha.titul }}</a>
+            </li>
+            <li class="list-group-item">
+                <strong>Stav:</strong>
+                <span class="badge {{ loan.status_badge_class }}">{{ loan.get_stav_display }}</span>
+            </li>
+            <li class="list-group-item"><strong>Datum výpůjčky:</strong> {{ loan.datum_vypujcky|date:'j. n. Y' }}</li>
+            <li class="list-group-item"><strong>Termín vrácení:</strong> {{ loan.termin_vraceni|date:'j. n. Y' }}</li>
+            <li class="list-group-item"><strong>Naposledy upraveno:</strong> {{ loan.upraveno|date:'j. n. Y H:i' }}</li>
+            <li class="list-group-item loan-note"><strong>Poznámka:</strong> {{ loan.poznamka|default:'—' }}</li>
+        </ul>
+
+        <a href="{% url 'loans_list' %}" class="btn btn-outline-primary">Zpět na seznam výpůjček</a>
+    </div>
+</div>
+{% endblock %}

@@ -1,5 +1,7 @@
 from django.core.validators import MaxValueValidator, MinValueValidator
+from django.core.exceptions import ValidationError
 from django.db import models
+from django.utils import timezone
 
 
 class Autor(models.Model):
@@ -120,3 +122,93 @@ class Recenze(models.Model):
     def __str__(self):
         hvezdy = dict(self.HODNOCENI_CHOICES).get(self.hodnoceni, '')
         return f'{self.recenzent} | {self.text[:40]} | {self.upraveno:%d.%m.%Y %H:%M} | {hvezdy}'
+
+
+class Vypujcka(models.Model):
+    # Choices držíme jako konstantu přímo v modelu, aby byly na jednom místě
+    # pro formuláře, admin i případné validace.
+    STAV_VYPUJCENO = 'vypujceno'
+    STAV_VRACENO = 'vraceno'
+    STAV_PO_TERMINU = 'po_terminu'
+    STAV_CHOICES = (
+        (STAV_VYPUJCENO, 'Vypůjčeno'),
+        (STAV_VRACENO, 'Vráceno'),
+        (STAV_PO_TERMINU, 'Po termínu'),
+    )
+
+    # ForeignKey představuje vazbu 1:N (jedna kniha může mít více historických výpůjček).
+    kniha = models.ForeignKey(
+        Kniha,
+        on_delete=models.CASCADE,
+        related_name='vypujcky',
+        verbose_name='Kniha',
+        help_text='Vyberte knihu, která je půjčená.'
+    )
+    ctenar = models.CharField(
+        max_length=120,
+        verbose_name='Čtenář',
+        help_text='Zadejte jméno a příjmení čtenáře.',
+        error_messages={'blank': 'Čtenář musí být vyplněn.'}
+    )
+    # timezone.localdate vrací datum v lokálním časovém pásmu Django projektu.
+    datum_vypujcky = models.DateField(
+        default=timezone.localdate,
+        verbose_name='Datum výpůjčky',
+        help_text='Datum, kdy byla kniha zapůjčena.'
+    )
+    termin_vraceni = models.DateField(
+        verbose_name='Termín vrácení',
+        help_text='Nejzazší datum, do kdy má být kniha vrácena.',
+        error_messages={'blank': 'Termín vrácení je povinný.'}
+    )
+    stav = models.CharField(
+        max_length=20,
+        choices=STAV_CHOICES,
+        default=STAV_VYPUJCENO,
+        verbose_name='Stav výpůjčky',
+        help_text='Aktuální stav výpůjčky.'
+    )
+    poznamka = models.TextField(
+        blank=True,
+        verbose_name='Poznámka',
+        help_text='Volitelná poznámka (poškození, domluva o prodloužení, ...).'
+    )
+    upraveno = models.DateTimeField(auto_now=True, verbose_name='Naposledy upraveno')
+
+    class Meta:
+        ordering = ['-datum_vypujcky', 'termin_vraceni']
+        verbose_name = 'Výpůjčka'
+        verbose_name_plural = 'Výpůjčky'
+
+    def __str__(self):
+        return f'{self.ctenar} | {self.kniha.titul} | {self.get_stav_display()}'
+
+    def clean(self):
+        # business pravidlo ze zadání: termín vrácení nesmí být dříve
+        # než samotné datum výpůjčky.
+        if self.termin_vraceni and self.datum_vypujcky and self.termin_vraceni < self.datum_vypujcky:
+            raise ValidationError({'termin_vraceni': 'Termín vrácení nesmí být dříve než datum výpůjčky.'})
+
+        # rozšiřující výzva: u jedné knihy povolíme jen jednu aktivní výpůjčku.
+        # Vyloučíme vlastní záznam (self.pk), aby šla výpůjčka bez problému upravit.
+        aktivni_vypujcka_existuje = (
+            Vypujcka.objects
+            .filter(kniha=self.kniha, stav=self.STAV_VYPUJCENO)
+            .exclude(pk=self.pk)
+            .exists()
+        )
+        if self.kniha_id and self.stav == self.STAV_VYPUJCENO and aktivni_vypujcka_existuje:
+            raise ValidationError({'stav': 'Tato kniha už má aktivní výpůjčku.'})
+
+    def je_po_terminu(self):
+        # Metoda vrací bool, aby se dala použít jak v šabloně, tak v adminu.
+        dnes = timezone.localdate()
+        return self.stav != self.STAV_VRACENO and self.termin_vraceni < dnes
+
+    def aktualizuj_stav(self, ulozit=True):
+        # Přepočítá stav objektu podle termínu.
+        # Pokud je výpůjčka vrácená, stav už neměníme.
+        if self.stav != self.STAV_VRACENO and self.je_po_terminu():
+            self.stav = self.STAV_PO_TERMINU
+            if ulozit:
+                self.save(update_fields=['stav', 'upraveno'])

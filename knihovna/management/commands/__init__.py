@@ -1,0 +1,1 @@
+# Balíček konkrétních management commandů.
