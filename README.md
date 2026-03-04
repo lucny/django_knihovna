@@ -44,6 +44,16 @@ Projekt pak běží na `http://127.0.0.1:8000/`.
 - vytvoření migrací: `python manage.py makemigrations`
 - Django shell: `python manage.py shell`
 
+## Checklist po přepnutí větve
+
+Po `git checkout` na jinou větev (např. `main` ↔ `ukoly`) vždy spusťte:
+
+1. `python manage.py migrate`
+2. `python manage.py check`
+3. `python manage.py runserver`
+
+Tím předejdete chybám typu `no such table` při načítání detailů knih, autorů nebo výpůjček.
+
 ## Řešení typických problémů při spuštění
 
 ### 1) Nejde aktivovat virtuální prostředí v PowerShellu
