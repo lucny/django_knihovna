@@ -1,0 +1,49 @@
+.opencode
+
+# Python cache / build
+__pycache__/
+*.py[cod]
+*$py.class
+*.pyo
+*.pyd
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Packaging
+build/
+dist/
+*.egg-info/
+.eggs/
+
+# Tool caches
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+.coverage.*
+htmlcov/
+
+# Django
+*.log
+local_settings.py
+db.sqlite3-journal
+
+# Collected/static generated files
+staticfiles/
+
+# Media uploads (runtime content)
+media/autori/
+media/obalky/
+
+# IDE/editor
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db
