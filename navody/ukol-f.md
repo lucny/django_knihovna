@@ -4,7 +4,7 @@
 Navazuje na [ukol-e.md](ukol-e.md) a stále používá model `Vypujcka`.
 
 ## Cíl cvičení
-Procvičit agregace a seskupování dat (bez vytváření nového modelu čtenáře).
+Procvičit agregace a seskupování dat nad uživateli (`User`) bez vytváření samostatného modelu čtenáře.
 
 ---
 
@@ -17,10 +17,10 @@ Požadavky:
    - počet všech výpůjček,
    - počet aktivních výpůjček (`stav='vypujceno'`),
    - počet výpůjček po termínu.
-3. Každé jméno čtenáře odkazuje na `/knihovna/readers/<jmeno>/`.
+3. Každé jméno čtenáře odkazuje na `/knihovna/readers/<id>/` (ID uživatele).
 4. Na detailu čtenáře zobrazte jeho výpůjčky v tabulce.
 
-Poznámka: jméno čtenáře můžete do URL převést bezpečně přes `slugify` nebo jednodušší vlastní převod.
+Poznámka: čtenář je uživatel (`User`), doporučeně člen skupiny `readers`.
 
 ---
 
@@ -36,6 +36,7 @@ Poznámka: jméno čtenáře můžete do URL převést bezpečně přes `slugify
 - [ ] detail čtenáře zobrazuje jen jeho výpůjčky,
 - [ ] URL jsou stabilní a nevedou k 500 chybám,
 - [ ] stránka je přehledná na desktopu i mobilu.
+
 
 ---
 

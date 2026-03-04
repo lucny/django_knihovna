@@ -19,7 +19,8 @@ Model musí splňovat:
 
 1. Model dědí z `models.Model`.
 2. Pole `kniha` je `ForeignKey` na model `Kniha`.
-3. Pole `ctenar` je `CharField` (jméno a příjmení čtenáře, povinné).
+3. Pole `ctenar` je `ForeignKey` na uživatele (`settings.AUTH_USER_MODEL`).
+  - Vybírejte uživatele ze skupiny `readers`.
 4. Pole `datum_vypujcky` je `DateField` s výchozí hodnotou aktuálního data.
 5. Pole `termin_vraceni` je `DateField` (povinné).
 6. Pole `stav` je `CharField` s `choices`:
@@ -32,7 +33,8 @@ Model musí splňovat:
 9. V `Meta` nastavte řazení od nejnovější výpůjčky (`-datum_vypujcky`) a pak podle termínu vrácení.
 10. Doplňte metodu `__str__`, která vrátí čitelně: čtenář, titul knihy, stav.
 11. Přidejte metodu `clean`, která zkontroluje, že `termin_vraceni` není dřív než `datum_vypujcky`.
-12. Proveďte migrace a vytvořte alespoň 3 testovací záznamy (různé stavy).
+12. V `clean` doplňte i kontrolu, že vybraný čtenář je ve skupině `readers`.
+13. Proveďte migrace a vytvořte alespoň 3 testovací záznamy (různé stavy).
 
 ---
 
@@ -71,5 +73,7 @@ https://docs.djangoproject.com/en/6.0/ref/models/constraints/
 Pokud si nejste jistí syntaxí:
 - modely: https://docs.djangoproject.com/en/6.0/topics/db/models/
 - pole modelů: https://docs.djangoproject.com/en/6.0/ref/models/fields/
+- AUTH_USER_MODEL: https://docs.djangoproject.com/en/6.0/topics/auth/customizing/#referencing-the-user-model
 - validace modelu (`clean`): https://docs.djangoproject.com/en/6.0/ref/models/instances/#django.db.models.Model.clean
 - migrace: https://docs.djangoproject.com/en/6.0/topics/migrations/
+
