@@ -1,7 +1,6 @@
 from django.db.models import Count, Q
-from django.http import Http404
 from django.shortcuts import get_object_or_404, render
-from django.utils.text import slugify
+from django.contrib.auth import get_user_model
 
 from .models import Autor, Kniha, Vypujcka, Zanr
 
@@ -45,21 +44,6 @@ def author_detail(request, pk):
     return render(request, 'author_detail.html', {'autor': autor, 'knihy_autora': knihy_autora})
 
 
-def _reader_slug(reader_name):
-    # Slug vytváří URL-safe variantu jména čtenáře.
-    # Použijeme ASCII slug (bez diakritiky), aby odpovídal <slug:...> converteru.
-    return slugify(reader_name)
-
-
-def _reader_name_from_slug(reader_slug):
-    # Nemáme samostatný model čtenáře, proto mapujeme slug zpět
-    # porovnáním nad DISTINCT jmény z tabulky výpůjček.
-    for reader_name in Vypujcka.objects.values_list('ctenar', flat=True).distinct():
-        if _reader_slug(reader_name) == reader_slug:
-            return reader_name
-    raise Http404('Čtenář nenalezen.')
-
-
 def _decorate_loan_for_ui(loan):
     # Připravíme prezentační metadata ve view, aby šablona obsahovala
     # minimum podmínek a zůstala přehledná.
@@ -78,7 +62,7 @@ def loans_list(request):
     """Seznam výpůjček se zvýrazněním po termínu a odkazy na detail."""
     loans = list(
         Vypujcka.objects
-        .select_related('kniha')
+        .select_related('kniha', 'ctenar')
         .order_by('-datum_vypujcky', 'termin_vraceni')
     )
 
@@ -90,7 +74,7 @@ def loans_list(request):
 
 def loan_detail(request, pk):
     """Detail konkrétní výpůjčky."""
-    loan = get_object_or_404(Vypujcka.objects.select_related('kniha'), pk=pk)
+    loan = get_object_or_404(Vypujcka.objects.select_related('kniha', 'ctenar'), pk=pk)
     _decorate_loan_for_ui(loan)
     return render(request, 'loan_detail.html', {'loan': loan})
 
@@ -99,20 +83,24 @@ def readers_list(request):
     """Přehled čtenářů odvozený z tabulky výpůjček s agregovanými počty."""
     readers_queryset = (
         Vypujcka.objects
-        .values('ctenar')
+        .values('ctenar', 'ctenar__username', 'ctenar__first_name', 'ctenar__last_name')
         .annotate(
             total_loans=Count('id'),
             active_loans=Count('id', filter=Q(stav=Vypujcka.STAV_VYPUJCENO)),
             overdue_loans=Count('id', filter=Q(stav=Vypujcka.STAV_PO_TERMINU)),
         )
-        .order_by('ctenar')
+        .order_by('ctenar__username')
     )
 
-    # Každý řádek rozšíříme o slug, aby šablona nemusela řešit transformaci jména.
+    # Každý řádek rozšíříme o zobrazované jméno čtenáře.
     readers = [
         {
-            **reader,
-            'reader_slug': _reader_slug(reader['ctenar']),
+            'reader_id': reader['ctenar'],
+            'username': reader['ctenar__username'],
+            'display_name': (f"{reader['ctenar__first_name']} {reader['ctenar__last_name']}".strip() or reader['ctenar__username']),
+            'total_loans': reader['total_loans'],
+            'active_loans': reader['active_loans'],
+            'overdue_loans': reader['overdue_loans'],
         }
         for reader in readers_queryset
     ]
@@ -120,27 +108,28 @@ def readers_list(request):
     return render(request, 'readers_list.html', {'readers': readers})
 
 
-def reader_detail(request, reader_slug):
-    """Detail čtenáře a jeho výpůjček podle slug URL."""
-    reader = _reader_name_from_slug(reader_slug)
-
-    # get_object_or_404 zaručí 404 i v případě, že mezitím čtenář zmizí z dat.
-    get_object_or_404(Vypujcka.objects.filter(ctenar=reader))
+def reader_detail(request, reader_pk):
+    """Detail čtenáře a jeho výpůjček podle ID uživatele."""
+    user_model = get_user_model()
+    reader = get_object_or_404(user_model, pk=reader_pk)
 
     reader_loans = list(
         Vypujcka.objects
-        .filter(ctenar=reader)
-        .select_related('kniha')
+        .filter(ctenar_id=reader.pk)
+        .select_related('kniha', 'ctenar')
         .order_by('-datum_vypujcky', 'termin_vraceni')
     )
+
     for loan in reader_loans:
         _decorate_loan_for_ui(loan)
+
+    reader_display_name = reader.get_full_name().strip() or reader.username
 
     return render(
         request,
         'reader_detail.html',
         {
-            'reader': reader,
+            'reader': reader_display_name,
             'reader_loans': reader_loans,
         },
     )

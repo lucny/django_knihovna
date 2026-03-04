@@ -1,8 +1,11 @@
 from datetime import timedelta
 
+from django.contrib.auth import get_user_model
+from django.contrib.auth.models import Group
 from django.core.exceptions import ValidationError
 from django.core.management.base import BaseCommand
 from django.utils import timezone
+from django.utils.text import slugify
 
 from knihovna.models import Kniha, Vypujcka
 
@@ -11,6 +14,27 @@ class Command(BaseCommand):
     help = 'Vytvoří vzorová data pro model Vypujcka (minimálně 8 záznamů).'
 
     def handle(self, *args, **options):
+        user_model = get_user_model()
+        readers_group, _ = Group.objects.get_or_create(name='readers')
+
+        def get_or_create_reader(full_name):
+            parts = full_name.strip().split(maxsplit=1)
+            first_name = parts[0] if parts else ''
+            last_name = parts[1] if len(parts) > 1 else ''
+
+            existing = user_model.objects.filter(first_name=first_name, last_name=last_name).first()
+            if existing is None:
+                base = slugify(full_name) or 'reader'
+                username = base
+                index = 1
+                while user_model.objects.filter(username=username).exists():
+                    username = f'{base}-{index}'
+                    index += 1
+                existing = user_model.objects.create(username=username, first_name=first_name, last_name=last_name)
+
+            existing.groups.add(readers_group)
+            return existing
+
         knihy = list(Kniha.objects.order_by('id')[:4])
         if not knihy:
             self.stdout.write(self.style.ERROR('Nelze vytvořit výpůjčky: v databázi nejsou žádné knihy.'))
@@ -33,7 +57,8 @@ class Command(BaseCommand):
         ]
 
         vytvoreno = 0
-        for ctenar, kniha, datum_vypujcky, termin_vraceni, stav in vzorova_data:
+        for ctenar_jmeno, kniha, datum_vypujcky, termin_vraceni, stav in vzorova_data:
+            ctenar = get_or_create_reader(ctenar_jmeno)
             # update_or_create drží command opakovatelný (idempotentní):
             # opakované spuštění neduplikuje řádky.
             vypujcka, created = Vypujcka.objects.update_or_create(

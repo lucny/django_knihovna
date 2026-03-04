@@ -145,10 +145,13 @@ class Vypujcka(models.Model):
         verbose_name='Kniha',
         help_text='Vyberte knihu, která je půjčená.'
     )
-    ctenar = models.CharField(
-        max_length=120,
+    ctenar = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name='vypujcky',
+        limit_choices_to={'groups__name': 'readers'},
         verbose_name='Čtenář',
-        help_text='Zadejte jméno a příjmení čtenáře.',
+        help_text='Vyberte čtenáře (uživatele), ideálně ze skupiny readers.',
         error_messages={'blank': 'Čtenář musí být vyplněn.'}
     )
     # timezone.localdate vrací datum v lokálním časovém pásmu Django projektu.
@@ -182,7 +185,11 @@ class Vypujcka(models.Model):
         verbose_name_plural = 'Výpůjčky'
 
     def __str__(self):
-        return f'{self.ctenar} | {self.kniha.titul} | {self.get_stav_display()}'
+        return f'{self.ctenar_jmeno()} | {self.kniha.titul} | {self.get_stav_display()}'
+
+    def ctenar_jmeno(self):
+        cele_jmeno = self.ctenar.get_full_name().strip()
+        return cele_jmeno or self.ctenar.username
 
     def clean(self):
         # business pravidlo ze zadání: termín vrácení nesmí být dříve
@@ -200,6 +207,10 @@ class Vypujcka(models.Model):
         )
         if self.kniha_id and self.stav == self.STAV_VYPUJCENO and aktivni_vypujcka_existuje:
             raise ValidationError({'stav': 'Tato kniha už má aktivní výpůjčku.'})
+
+        # Čtenář má být běžný uživatel ve skupině "readers".
+        if self.ctenar_id and not self.ctenar.groups.filter(name='readers').exists():
+            raise ValidationError({'ctenar': 'Vybraný uživatel musí patřit do skupiny readers.'})
 
     def je_po_terminu(self):
         # Metoda vrací bool, aby se dala použít jak v šabloně, tak v adminu.

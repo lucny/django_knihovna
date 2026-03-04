@@ -12,5 +12,5 @@ urlpatterns = [
     path('loans/<int:pk>/', views.loan_detail, name='loan_detail'),
     # Přehled čtenářů odvozený z výpůjček (bez samostatného modelu čtenáře).
     path('readers/', views.readers_list, name='readers_list'),
-    path('readers/<slug:reader_slug>/', views.reader_detail, name='reader_detail'),
+    path('readers/<int:reader_pk>/', views.reader_detail, name='reader_detail'),
 ]

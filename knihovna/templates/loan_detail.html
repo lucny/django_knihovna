@@ -8,7 +8,7 @@
         <h2>Detail výpůjčky</h2>
 
         <ul class="list-group mb-3">
-            <li class="list-group-item"><strong>Čtenář:</strong> {{ loan.ctenar }}</li>
+            <li class="list-group-item"><strong>Čtenář:</strong> {{ loan.ctenar_jmeno }}</li>
             <li class="list-group-item">
                 <strong>Kniha:</strong>
                 <a href="{% url 'book_detail' loan.kniha.pk %}">{{ loan.kniha.titul }}</a>

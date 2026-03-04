@@ -20,7 +20,7 @@
         <tbody>
             {% for loan in loans %}
             <tr class="{{ loan.row_class }}">
-                <td>{{ loan.ctenar }}</td>
+                <td>{{ loan.ctenar_jmeno }}</td>
                 <td><a href="{% url 'book_detail' loan.kniha.pk %}">{{ loan.kniha.titul }}</a></td>
                 <td>
                     <span class="badge {{ loan.status_badge_class }}">{{ loan.get_stav_display }}</span>
