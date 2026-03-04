@@ -14,9 +14,10 @@ Naučit se smysluplně zpřístupnit nový model v Django adminu a vytvořit rea
 2. Vytvořte vlastní `ModelAdmin` pro `Vypujcka`:
    - `list_display`: `ctenar`, `kniha`, `stav`, `datum_vypujcky`, `termin_vraceni`
    - `list_filter`: `stav`, `datum_vypujcky`
-   - `search_fields`: `ctenar`, `kniha__titul`
-3. Proveďte migrace (pokud jsou nové změny modelu).
-4. Vložte minimálně 8 testovacích záznamů:
+   - `search_fields`: `ctenar__username`, `ctenar__first_name`, `ctenar__last_name`, `kniha__titul`
+3. V admin formuláři povolte ve výběru `ctenar` jen uživatele ze skupiny `readers`.
+4. Proveďte migrace (pokud jsou nové změny modelu).
+5. Vložte minimálně 8 testovacích záznamů:
    - alespoň 2 vrácené,
    - alespoň 2 po termínu,
    - různí čtenáři,
@@ -34,8 +35,10 @@ Naučit se smysluplně zpřístupnit nový model v Django adminu a vytvořit rea
 ## Kontrolní kritéria
 - [ ] model je v adminu viditelný,
 - [ ] filtrování a vyhledávání funguje,
+- [ ] ve formuláři výpůjčky jsou nabídnuti pouze uživatelé ze skupiny `readers`,
 - [ ] data odpovídají scénářům ze zadání,
 - [ ] admin je čitelný i při více záznamech.
+
 
 ---
 

@@ -14,7 +14,7 @@ V `knihovna/urls.py` vytvořte a pojmenujte všechny cesty:
 - `loans/` (seznam výpůjček)
 - `loans/<int:pk>/` (detail výpůjčky)
 - `readers/` (seznam čtenářů)
-- `readers/<slug:reader_slug>/` (detail čtenáře)
+- `readers/<int:reader_pk>/` (detail čtenáře)
 
 V `mat_knihovna/urls.py` zachovejte připojení aplikace pod `/knihovna/`.
 
@@ -34,7 +34,7 @@ Požadavky:
 - [ ] žádný `NoReverseMatch`,
 - [ ] žádné nefunkční odkazy v navbaru,
 - [ ] URL názvy jsou jednoznačné a srozumitelné,
-- [ ] detail čtenáře funguje i pro jména s mezerou/diakritikou (pokud je řešíte přes slug).
+- [ ] detail čtenáře funguje pro existující i neexistující ID (200/404).
 
 ---
 
