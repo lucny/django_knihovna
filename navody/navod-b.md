@@ -116,6 +116,9 @@ Tento výpis rychle ověří, že model vrací záznamy ve správném pořadí a
 ## Kompletní kód pro kontrolu (třída `Recenze`)
 
 ```python
+from django.conf import settings
+
+
 class Recenze(models.Model):
     HODNOCENI_CHOICES = (
         (0, '☆☆☆☆☆'),
@@ -127,11 +130,11 @@ class Recenze(models.Model):
     )
 
     recenzent = models.ForeignKey(
-        Autor,
+        settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
         verbose_name='Recenzent',
-        help_text='Vyberte autora recenze',
-        error_messages={'null': 'Recenzent musí být vybrán'}
+        help_text='Vyberte uživatele, který recenzi napsal.',
+        error_messages={'blank': 'Recenzent musí být vybrán'}
     )
     kniha = models.ForeignKey(
         Kniha,

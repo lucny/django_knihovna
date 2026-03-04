@@ -98,13 +98,15 @@ python manage.py shell
 ```
 
 ```python
-from knihovna.models import Autor, Kniha, Recenze
+from django.contrib.auth import get_user_model
+from knihovna.models import Kniha, Recenze
 
-autor = Autor.objects.first()
+k_user = get_user_model()
+uzivatel = k_user.objects.first()
 kniha = Kniha.objects.first()
 
 Recenze.objects.create(
-    recenzent=autor,
+    recenzent=uzivatel,
     kniha=kniha,
     text='Výborná kniha, doporučuji k přečtení.',
     hodnoceni=5
@@ -112,7 +114,7 @@ Recenze.objects.create(
 ```
 
 ### Vysvětlení
-- `recenzent`: objekt autora (musí existovat v DB).
+- `recenzent`: objekt uživatele (`User`) — musí existovat v DB.
 - `kniha`: objekt knihy (musí existovat v DB).
 - `text`: povinný text recenze.
 - `hodnoceni`: číslo z intervalu 0 až 5.
@@ -143,7 +145,7 @@ Výpis všech recenzí je nejrychlejší kontrola, že migrace i vložení dat p
 
 - **Zapomenutý import `Recenze` v adminu**: aplikace hlásí `NameError` nebo model není v `/admin`.
 - **Spuštěno jen `makemigrations` bez `migrate`**: model je v kódu, ale tabulka v DB neexistuje.
-- **V shellu `Autor.objects.first()` vrací `None`**: `create(...)` selže, protože není vybraný recenzent/kniha.
+- **V shellu `get_user_model().objects.first()` vrací `None`**: `create(...)` selže, protože není vybraný recenzent.
 - **Špatné pořadí příkazů**: po změně modelu se objevují neaplikované migrace.
 - **Neověření výsledku**: chyba se projeví až v dalších úlohách při načítání recenzí.
 
@@ -153,7 +155,7 @@ Výpis všech recenzí je nejrychlejší kontrola, že migrace i vložení dat p
 
 1. Když model není v `/admin`, zkontrolujte `admin.py` (import + `register`).
 2. Když je DB chyba „no such table“, spusťte `python manage.py migrate`.
-3. Když `create(...)` padá, ověřte, že existují autor i kniha (`Autor.objects.count()`, `Kniha.objects.count()`).
+3. Když `create(...)` padá, ověřte, že existuje uživatel i kniha (`get_user_model().objects.count()`, `Kniha.objects.count()`).
 4. Po vložení dat vždy ověřte `Recenze.objects.all()`.
 5. Pokud shell vrací nečekané chyby, ukončete ho a spusťte znovu po aktivaci `.venv`.
 

@@ -1,5 +1,6 @@
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.core.exceptions import ValidationError
+from django.conf import settings
 from django.db import models
 from django.utils import timezone
 
@@ -82,11 +83,11 @@ class Recenze(models.Model):
     )
 
     recenzent = models.ForeignKey(
-        Autor,
+        settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
         related_name='recenze',
         verbose_name='Recenzent',
-        help_text='Vyberte recenzenta',
+        help_text='Vyberte uživatele, který recenzi napsal.',
         error_messages={'blank': 'Recenzent musí být vybrán'}
     )
     kniha = models.ForeignKey(

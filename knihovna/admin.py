@@ -11,7 +11,7 @@ admin.site.register(Zanr)
 class RecenzeAdmin(admin.ModelAdmin):
 	list_display = ('recenzent', 'kniha', 'hodnoceni', 'upraveno')
 	list_filter = ('hodnoceni', 'upraveno')
-	search_fields = ('text', 'kniha__titul', 'recenzent__jmeno', 'recenzent__prijmeni')
+	search_fields = ('text', 'kniha__titul', 'recenzent__username', 'recenzent__first_name', 'recenzent__last_name', 'recenzent__email')
 
 
 @admin.register(Vypujcka)

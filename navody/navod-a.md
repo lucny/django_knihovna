@@ -22,6 +22,8 @@ Vytvořit v `knihovna/models.py` nový Django model `Recenze` tak, aby přesně 
 - povinné hodnocení 0–5 formou výběru,
 - automatické ukládání času poslední změny.
 
+Poznámka: recenzent je **uživatel systému** (`User`), ne model `Autor`.
+
 ### Co je důležité pochopit před začátkem
 - Každý model v Djangu je **Python třída**.
 - Třída modelu **dědí z `models.Model`**, tím Djangu říkáte: „toto je databázová tabulka“.
@@ -94,17 +96,17 @@ Do třídy pod konstantu přidejte:
 
 ```python
 recenzent = models.ForeignKey(
-	Autor,
+	settings.AUTH_USER_MODEL,
 	on_delete=models.CASCADE,
 	verbose_name='Recenzent',
-	help_text='Vyberte autora recenze',
-	error_messages={'null': 'Recenzent musí být vybrán'}
+	help_text='Vyberte uživatele, který recenzi napsal.',
+	error_messages={'blank': 'Recenzent musí být vybrán'}
 )
 ```
 
 ### Vysvětlení
-- `ForeignKey(Autor, ...)`: jeden autor může mít více recenzí (1:N).
-- `on_delete=models.CASCADE`: při smazání autora smaž i související recenze.
+- `settings.AUTH_USER_MODEL`: použije aktivní uživatelský model projektu (standardně `auth.User`).
+- `on_delete=models.CASCADE`: při smazání uživatele smaž i související recenze.
 - `verbose_name`: text popisku v administraci/formulářích.
 - `help_text`: nápověda pod polem.
 - `error_messages`: vlastní text validační chyby.
@@ -246,6 +248,9 @@ Krok je hotový, když pole `upraveno` používá `auto_now=True`.
 ## Kompletní kód pro kontrolu (finální stav kroku A)
 
 ```python
+from django.conf import settings
+
+
 class Recenze(models.Model):
 	HODNOCENI_CHOICES = (
 		(0, '☆☆☆☆☆'),
@@ -257,11 +262,11 @@ class Recenze(models.Model):
 	)
 
 	recenzent = models.ForeignKey(
-		Autor,
+		settings.AUTH_USER_MODEL,
 		on_delete=models.CASCADE,
 		verbose_name='Recenzent',
-		help_text='Vyberte autora recenze',
-		error_messages={'null': 'Recenzent musí být vybrán'}
+		help_text='Vyberte uživatele, který recenzi napsal.',
+		error_messages={'blank': 'Recenzent musí být vybrán'}
 	)
 	kniha = models.ForeignKey(
 		Kniha,
