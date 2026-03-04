@@ -20,6 +20,8 @@ Po vytvoření modelu `Recenze` provést:
 2. migraci databáze,
 3. vložení testovacího záznamu.
 
+Poznámka: pole `recenzent` odkazuje na uživatele systému (`User`), nikoli na model `Autor`.
+
 ## Postup krok za krokem
 
 ---
